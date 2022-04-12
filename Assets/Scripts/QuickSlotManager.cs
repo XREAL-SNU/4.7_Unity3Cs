@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class QuickSlotManager : MonoBehaviour
+public class QuickSlotManager : MonoBehaviour, IPointerClickHandler
+
 {
     [SerializeField] List<Sprite> _buttonIcons;
 
@@ -24,4 +26,16 @@ public class QuickSlotManager : MonoBehaviour
         // 버퍼 비우기
         CurrentlySelected = null;
     }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // 버퍼 비우기
+        if (CurrentlySelected != null)
+        {
+            CurrentlySelected.Unselect();
+            CurrentlySelected = null;
+        }
+
+    }
+
 }

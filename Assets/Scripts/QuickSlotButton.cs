@@ -42,4 +42,9 @@ public class QuickSlotButton : MonoBehaviour, ISelectHandler, IPointerClickHandl
             QuickSlotManager.AddToQuickSlot(this);
         }
     }
+
+    public void Unselect()
+    {
+        ButtonImage.color = Color.white;
+    }
 }
