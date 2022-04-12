@@ -18,7 +18,7 @@ public class QuickSlotManager : MonoBehaviour
     public static void AddToQuickSlot(QuickSlotButton quickslotButton)
     {
         // 퀵슬롯 등록
-        quickslotButton.ButtonImage.sprite = CurrentlySelected.ButtonImage.sprite;
+        quickslotButton.SpecificExpression.sprite = CurrentlySelected.SpecificExpression.sprite;
         quickslotButton.ButtonText.text = CurrentlySelected.ButtonText.text;
 
         // 버퍼 비우기

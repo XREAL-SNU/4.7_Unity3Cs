@@ -11,6 +11,8 @@ public class QuickSlotButton : MonoBehaviour, ISelectHandler, IPointerClickHandl
 
     public Image ButtonImage;
     public Text ButtonText;
+    public Image SpecificExpression;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,8 +27,10 @@ public class QuickSlotButton : MonoBehaviour, ISelectHandler, IPointerClickHandl
 
     public void OnSelect(BaseEventData eventData)
     {
+        
         if(ButtonType == _ButtonType.Viewport)
         {
+            ButtonImage.color = Color.yellow;
             QuickSlotManager.CurrentlySelected = this;
         }
     }
@@ -35,7 +39,7 @@ public class QuickSlotButton : MonoBehaviour, ISelectHandler, IPointerClickHandl
     {
         if (ButtonType == _ButtonType.Quickslot && QuickSlotManager.CurrentlySelected != null)
         {
-
+            QuickSlotManager.AddToQuickSlot(this);
         }
     }
 }
