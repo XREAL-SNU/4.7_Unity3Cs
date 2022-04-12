@@ -22,6 +22,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected Vector2 _input;
     protected bool _isRun;
     protected bool _isJump;
+    protected bool _isPunch;
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
@@ -43,13 +44,15 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
         _isRun = Input.GetKey(KeyCode.LeftShift);
         _isJump = Input.GetKey(KeyCode.Space);
+        _isPunch = Input.GetKey(KeyCode.Z);
 
         //Roll();
+        Punch();
         Jump();
         GroundCheck();
         Move();
+        
 
-        //Punch();
     }
 
     private void Move()
@@ -89,13 +92,15 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
         Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
-        // move the player
-        _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+        if(!_isPunch) {
+            // move the player
+            _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
-        // animate
-        _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * _speedChangeRate);
-        _animator.SetFloat("Speed", _animationBlend);
-        _animator.SetFloat("MotionSpeed", 1.0f);
+            // animate
+            _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * _speedChangeRate);
+            _animator.SetFloat("Speed", _animationBlend);
+            _animator.SetFloat("MotionSpeed", 1.0f);
+        }
     }
 
     private void Jump()
@@ -132,6 +137,21 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _grounded = Physics.CheckSphere(transform.position, _groundCheckRadius, GroundLayers, QueryTriggerInteraction.Ignore);
         _animator.SetBool("Grounded", _grounded);
     }
+
+    void Punch()
+    {
+        if (Input.GetKeyDown(KeyCode.Z) && !_isJump && !_isPunch)
+        {
+            _isPunch = true;
+            _animator.SetTrigger("Punch");
+
+            Invoke("ResetTrigger", 0.5f);
+            Debug.Log("Punch z");
+        }
+    }
+    void ResetTrigger() {
+        _isPunch = false;
+    }
     /*
     void Roll()
     {
@@ -143,7 +163,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
             Invoke("ResetTrigger", 1f);
         }
     }
-
+    
     void Punch()
     {
         if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJump && !_isRoll && !_isPunch)
