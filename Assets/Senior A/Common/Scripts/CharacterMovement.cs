@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class CharacterMovement : MonoBehaviour
 {
@@ -15,10 +16,20 @@ public class CharacterMovement : MonoBehaviour
 
     private Animator _animator;
 
+
+    private Vector3 _pos;
+    float _targetX = 3;
+    float _targetY = 3;
+    float _tweeningDuration = 2;
+
+    Sequence _mySequence;
+
     void Start()
     {
         _charRigidbody = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
+
+        _mySequence = DOTween.Sequence().Append(transform.DOMoveX(_targetX, _tweeningDuration).SetEase(Ease.Linear)).Append(transform.DOMoveY(_targetY, _tweeningDuration).SetEase(Ease.Linear));
     }
 
     void Update()
