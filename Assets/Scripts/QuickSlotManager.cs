@@ -6,104 +6,31 @@ using UnityEngine.EventSystems;
 
 public class QuickSlotManager : MonoBehaviour
 {
-    [SerializedField] List<Sprite> _buttonIcons;
-    [SerializedField] List<QuickSlotButton> _quickSlots;
+   [SerializeField] List<Sprite> _buttonIcons;
 
-    public Transform GridLayout; 
+   public Transform GridLayout; // 버튼 한꺼번에 참조 -> Transform.GetChild()  
+   public GameObject _viewportButtonPrefab;
 
-    public static QuickSlotButton CurrentlySelected;
-    public static List<QuickSlotButton> s_quickSlots;
+
 
     void Start()
     {
-        GameObject buttonInstance; //?
-        QuickSlotButton buttonProp;
+        GameObject buttonInstance; // Instantiate 의 반환갑 저장 변수
+        QuickSlotButton buttonProp; // QuickSlotButton 컴포넌트 저장 번수
+        
 
         for(int i = 0; i < _buttonIcons.Count; i++)
         {
-            buttonInstance = Instantiate(_viewportButtonPrefab, GridLayout); //?
-            buttonProp = buttonInstance.GetComponent<QuickSlotButton_Sol>(); //?
+            // Instantiate + GetComponent
+            buttonInstance = Instantiate(_viewportButtonPrefab, GridLayout); //
+            buttonProp = buttonInstance.GetComponent<QuickSlotButton>(); //
 
+            // Set QuickSortButton Properties
             buttonProp = GridLayout.GetChild(i).GetComponent<QuickSlotButton>();
             buttonProp.ButtonImage.sprite = _buttonIcons[i];
             buttonProp.ButtonText.text = _buttonIcons[i].name;
         }
 
-        s_quickSlots = new List<QuickSlotButton>();
-        for (int i = 0; i < _quickSlots.Count; i++)
-        {
-            s_quickSlots.Add(_quickSlots[i]);
-        }
 
-    }
-
-    static int CheckDistinct() 
-    {
-        int retVal = -1;
-
-        for (int i = 0; i < s_quickSlots.Count; i++)
-        {
-            if(s_quickSlots[i].fid == CurrentlySelected.fid)
-                retVale = i;
-        }
-        
-        return retVal;
-    }
-
-    public void OnSelect(BaseEventData eventData)
-    {
-        if (Buttontype == _ButtonType.Viewport)
-        {
-            QuickSlotManager.CurrentlySelected = this;
-        }
-    }
-
-
-    public static void AddToQuickSlot(QuickSlotButton quickSlotButton)
-    {
-        int index = CheckDistinct;
-        
-        if (index == -1)
-        {
-            // register quickslot
-            quickslotButton.ButtonImage.sprite = CurrentlySelected.ButtonImage.sprite;
-            quickslotButton.ButtonText.text = CurrentlySelected.ButtonText.text;
-            quickslotButton.fid = CurrentlySelected.fid;
-
-        }
-        else
-        {
-
-        }
-       
-        // vacate buffer
-        CurrentlySelected = null;
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        // vacate buffer
-        CurrentlySelected = null;
-    }
-
-    static void SwapButtons(QuickSlotButton quickslotButton, int index)
-    {
-        Sprite spriteBuf = quicksotButton.ButtonImage.sprite;
-        string textBuf = quickslotButton.ButtonText.text; 
-        int idBuf = quickslotButton.fid;
-
-        quickslotButton.ButtonImage.sprite = s_quickSlots[index].ButtonImage.sprite;
-        quickslotButton.ButtonImage.text = s_quickSlots[index].ButtonText.text;
-        quickslotButton.fid = s_quickSlots[indx].fid;
-
-        s_quickSlots[index].ButtonImage.sprite = spriteBuf;
-        s_quickSlots[index].ButtonText.text = textBuf;
-        s_quickSlots[index].fid = idBuf;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
