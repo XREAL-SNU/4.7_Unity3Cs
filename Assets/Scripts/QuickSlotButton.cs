@@ -12,6 +12,7 @@ public class QuickSlotButton : MonoBehaviour, ISelectHandler, IPointerClickHandl
     public Image ButtonImage;
     public Text ButtonText;
     public Image SpecificExpression;
+    public int fid;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +26,12 @@ public class QuickSlotButton : MonoBehaviour, ISelectHandler, IPointerClickHandl
         
     }
 
+    public void copiedByOtherButton(QuickSlotButton other)
+    {
+        this.SpecificExpression.sprite = other.SpecificExpression.sprite;
+        this.ButtonText.text = other.ButtonText.text;
+        this.fid = other.fid;
+    }
     public void OnSelect(BaseEventData eventData)
     {
         
@@ -47,4 +54,5 @@ public class QuickSlotButton : MonoBehaviour, ISelectHandler, IPointerClickHandl
     {
         ButtonImage.color = Color.white;
     }
+
 }
