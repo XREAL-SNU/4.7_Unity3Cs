@@ -45,14 +45,19 @@ public class PotalDOTween : MonoBehaviour
         if(EnterPlayer)
         {
             EnterPlayer = false;
-            DOTween.Sequence().Append(transform.DOJump(targetPotal.position, 3f, 10, 4).OnUpdate(() =>
-            {
-                if (transform.position == targetPotal.position)
-                {
-                    CharacterMovement.isGoing = false;
-                   
-                }
-            })).SetDelay(2f);
+            DOTween.Sequence().Append(transform.DOLocalMoveY(3f, 2f).SetEase(Ease.InOutQuad)).SetDelay(2f).Append(transform.DOLocalRotate(new Vector3(0, 5400, 0), 2.2f, RotateMode.FastBeyond360)); //.SetLoops(-1, LoopType.Yoyo)) 왜 무한반복이안되지?
+
+
+            StartCoroutine(teleCharacter());
         }
+    }
+
+    IEnumerator teleCharacter()
+    {
+        yield return new WaitForSeconds(6f);
+
+        CharacterMovement.isGoing = false;
+        GameObject.Find("Character").GetComponent<CharacterMovement>().transform.position = targetPotal.position;
+
     }
 }
