@@ -16,6 +16,7 @@ public class CharacterMovement : MonoBehaviour
 
     private Animator _animator;
 
+    public static bool isGoing;
 
     private Vector3 _pos;
     float _targetX = 3;
@@ -29,7 +30,8 @@ public class CharacterMovement : MonoBehaviour
         _charRigidbody = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
 
-        _mySequence = DOTween.Sequence().Append(transform.DOMoveX(_targetX, _tweeningDuration).SetEase(Ease.Linear)).Append(transform.DOMoveY(_targetY, _tweeningDuration).SetEase(Ease.Linear));
+        //_mySequence = DOTween.Sequence().Append(transform.DOMoveX(_targetX, _tweeningDuration).SetEase(Ease.Linear)).Append(transform.DOMoveY(_targetY, _tweeningDuration).SetEase(Ease.Linear));
+
     }
 
     void Update()
@@ -62,6 +64,8 @@ public class CharacterMovement : MonoBehaviour
 
         Jump();
         Punch();
+        if (isGoing) Going();
+     
     }
 
     void Jump()
@@ -88,5 +92,24 @@ public class CharacterMovement : MonoBehaviour
     {
         _isJump = false;
         _isPunch = false;
+    }
+    Transform targetTransform;
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Potal"))
+        {
+            isGoing = true;
+            targetTransform = other.transform;
+            other.GetComponent<BoxCollider>().enabled = false;
+            transform.DOLocalRotate(new Vector3(0, 1080, 0), 2f, RotateMode.FastBeyond360).SetEase(Ease.OutQuart);
+            other.GetComponent<PotalDOTween>().EnterPlayer = true;
+            
+        }
+    }
+
+    void Going()
+    {
+       // transform.SetParent(targetTransform);
+        transform.position = targetTransform.transform.position;
     }
 }
