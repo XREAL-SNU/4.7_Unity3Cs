@@ -22,6 +22,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected Vector2 _input;
     protected bool _isRun;
     protected bool _isJump;
+    protected bool _isPunching;
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
@@ -43,13 +44,12 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
         _isRun = Input.GetKey(KeyCode.LeftShift);
         _isJump = Input.GetKey(KeyCode.Space);
-
+        _isPunching=Input.GetKey(KeyCode.Z);
         //Roll();
         Jump();
         GroundCheck();
         Move();
-
-        //Punch();
+        Punch();
     }
 
     private void Move()
@@ -156,4 +156,22 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     }
 
     */
+    private void Punch()
+    {
+        if(_isPunching)
+        {            
+            _animator.SetBool("IsPunching", true);
+            _animator.applyRootMotion=false;
+        }
+        else
+        {
+            _animator.SetBool("IsPunching", false);
+            _animator.applyRootMotion=true;
+        }
+    }
+
+    private void ControllCamera()
+    {
+
+    }
 }
