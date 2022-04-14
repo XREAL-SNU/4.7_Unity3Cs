@@ -132,28 +132,4 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _grounded = Physics.CheckSphere(transform.position, _groundCheckRadius, GroundLayers, QueryTriggerInteraction.Ignore);
         _animator.SetBool("Grounded", _grounded);
     }
-    /*
-    void Roll()
-    {
-        if (Input.GetKeyDown(KeyCode.Z) && !_isJump && !_isRoll && !_isPunch)
-        {
-            _isRoll = true;
-            _animator.SetTrigger("Roll");
-
-            Invoke("ResetTrigger", 1f);
-        }
-    }
-
-    void Punch()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJump && !_isRoll && !_isPunch)
-        {
-            _isRoll = true;
-            _animator.SetTrigger("Punch");
-
-            Invoke("ResetTrigger", 0.3f);
-        }
-    }
-
-    */
 }
