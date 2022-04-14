@@ -24,6 +24,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected bool _isRun;
     protected bool _isJump;
     protected bool _isPunch;
+    protected int emotion = 0;
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
@@ -47,6 +48,19 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _isJump = Input.GetKey(KeyCode.Space);
         _isPunch = Input.GetKey(KeyCode.Z);
         _isMove = !(_input.x == 0 && _input.y == 0);
+        if(Input.GetKeyDown(KeyCode.Alpha1)) {
+            emotion = 0;
+        }
+        if(Input.GetKeyDown(KeyCode.Alpha2)) {
+            emotion = 1;
+        }
+        if(Input.GetKeyDown(KeyCode.Alpha3)) {
+            emotion = 2;
+        }
+        if(Input.GetKeyDown(KeyCode.Alpha4)) {
+            emotion = 3;
+        }
+        Debug.Log(emotion);
 
         //Roll();
         Jump();
@@ -54,6 +68,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         GroundCheck();
         Move();
 
+        changeFaceEmotion();
     }
 
     private void Move()
@@ -141,9 +156,15 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         if(_grounded) {
             if(_isPunch && !_isMove) {
                 _animator.SetBool("Punch", true);
+                _animator.applyRootMotion = false;
             } else {
                 _animator.SetBool("Punch", false);
+                _animator.applyRootMotion = true;
             }
         }
+    }
+
+    private void changeFaceEmotion() {
+
     }
 }
