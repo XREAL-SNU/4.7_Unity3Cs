@@ -20,8 +20,10 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected bool _grounded;
 
     protected Vector2 _input;
+    protected bool _isMove;
     protected bool _isRun;
     protected bool _isJump;
+    protected bool _isPunch;
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
@@ -43,13 +45,15 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
         _isRun = Input.GetKey(KeyCode.LeftShift);
         _isJump = Input.GetKey(KeyCode.Space);
+        _isPunch = Input.GetKey(KeyCode.Z);
+        _isMove = !(_input.x == 0 && _input.y == 0);
 
         //Roll();
         Jump();
+        Punch();
         GroundCheck();
         Move();
 
-        //Punch();
     }
 
     private void Move()
@@ -132,28 +136,14 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _grounded = Physics.CheckSphere(transform.position, _groundCheckRadius, GroundLayers, QueryTriggerInteraction.Ignore);
         _animator.SetBool("Grounded", _grounded);
     }
-    /*
-    void Roll()
-    {
-        if (Input.GetKeyDown(KeyCode.Z) && !_isJump && !_isRoll && !_isPunch)
-        {
-            _isRoll = true;
-            _animator.SetTrigger("Roll");
 
-            Invoke("ResetTrigger", 1f);
+    private void Punch() {
+        if(_grounded) {
+            if(_isPunch && !_isMove) {
+                _animator.SetBool("Punch", true);
+            } else {
+                _animator.SetBool("Punch", false);
+            }
         }
     }
-
-    void Punch()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJump && !_isRoll && !_isPunch)
-        {
-            _isRoll = true;
-            _animator.SetTrigger("Punch");
-
-            Invoke("ResetTrigger", 0.3f);
-        }
-    }
-
-    */
 }

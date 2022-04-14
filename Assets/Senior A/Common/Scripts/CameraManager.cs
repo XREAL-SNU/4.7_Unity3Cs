@@ -12,7 +12,7 @@ public class CameraManager : MonoBehaviour
 
     private bool isMouseRotate = false;
     private float xRotateSpeed = 300f;
-    private float yRotateSpeed = 2f;
+    private float yRotateSpeed = 10f;
 
     private float zoomspeed = 2f;
 
