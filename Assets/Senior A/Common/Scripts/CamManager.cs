@@ -103,7 +103,6 @@ public class CamManager : MonoBehaviour
 		{
 			if (thirdPersonCam?.m_Lens.FieldOfView < 80)
 			{
-				Debug.Log("Zoom out");
 				thirdPersonCam.m_Lens.FieldOfView += zoomSpeed;
 			}
 		}
@@ -111,7 +110,6 @@ public class CamManager : MonoBehaviour
 		{
 			if (thirdPersonCam?.m_Lens.FieldOfView > 5)
 			{
-				Debug.Log("Zoom in");
 				thirdPersonCam.m_Lens.FieldOfView -= zoomSpeed;
 			}
 		}

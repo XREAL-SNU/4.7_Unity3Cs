@@ -45,7 +45,7 @@ public class PotalDOTween : MonoBehaviour
         if(EnterPlayer)
         {
             EnterPlayer = false;
-            DOTween.Sequence().Append(transform.DOLocalMoveY(3f, 2f).SetEase(Ease.InOutQuad)).SetDelay(2f).Append(transform.DOLocalRotate(new Vector3(0, 5400, 0), 2.2f, RotateMode.FastBeyond360)); //.SetLoops(-1, LoopType.Yoyo)) 왜 무한반복이안되지?
+            DOTween.Sequence().Append(transform.DOLocalMoveY(3f, 2f).SetEase(Ease.InOutQuad)).SetDelay(2f).Join(transform.DOLocalRotate(new Vector3(0, 360, 0), 2.2f, RotateMode.FastBeyond360)).SetLoops(-1, LoopType.Restart); //.SetLoops(-1, LoopType.Yoyo)) 왜 무한반복이안되지?
 
 
             StartCoroutine(teleCharacter());
@@ -54,7 +54,7 @@ public class PotalDOTween : MonoBehaviour
 
     IEnumerator teleCharacter()
     {
-        yield return new WaitForSeconds(6f);
+        yield return new WaitForSeconds(20f); //기존 6초
 
         CharacterMovement.isGoing = false;
         GameObject.Find("Character").GetComponent<CharacterMovement>().transform.position = targetPotal.position;
