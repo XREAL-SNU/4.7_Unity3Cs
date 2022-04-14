@@ -6,24 +6,18 @@ using Cinemachine;
 public class CamManager : MonoBehaviour
 {
 	private GameObject player;
-	private GameObject FreeLookCamobj;
-    private CinemachineFreeLook FreeLookCam;
+	private CinemachineFreeLook thirdPersonCam;
 	private bool _useMouseToRotateTp;
 	private bool _isCurrentFp;
 
-
-    public float FreeLookCam.m_XAxis.m_MaxSpeed;
-	public float FreeLookCam.m_YAxis.m_MaxSpeed;
-
 	private void Start()
 	{
-		
+		// ī�޶� �Ѿƴٴ� �÷��̾ �����մϴ�.
 		player = GameObject.FindWithTag("Player").gameObject;
-		// player scene에 소환. 
-
-		FreeLookCam = GameObject.Find("FreeLookCamera").GetComponent<CinemachineFreeLook>();
-		FreeLookCam.Follow = player.transform;
-		FreeLookCam.LookAt = player.transform;
+		// 
+		thirdPersonCam = GameObject.Find("ThirdPersonCam").GetComponent<CinemachineFreeLook>();
+		thirdPersonCam.Follow = player.transform;
+		thirdPersonCam.LookAt = player.transform;
 	}
 
 	private void Update()
@@ -46,8 +40,8 @@ public class CamManager : MonoBehaviour
 		}
 		else
 		{
-			FreeLookCam.m_XAxis.m_MaxSpeed = 0;
-			FreeLookCam.m_YAxis.m_MaxSpeed = 0;
+			thirdPersonCam.m_XAxis.m_MaxSpeed = 0;
+			thirdPersonCam.m_YAxis.m_MaxSpeed = 0;
 		}
 
 		if (Input.mouseScrollDelta.y != 0 && !_isCurrentFp)
@@ -61,8 +55,8 @@ public class CamManager : MonoBehaviour
 
 	private void RotateTp()
 	{
-		FreeLookCam.m_XAxis.m_MaxSpeed = xRotateSpeed;
-		FreeLookCam.m_YAxis.m_MaxSpeed = yRotateSpeed;
+		thirdPersonCam.m_XAxis.m_MaxSpeed = xRotateSpeed;
+		thirdPersonCam.m_YAxis.m_MaxSpeed = yRotateSpeed;
 	}
 
 	public float zoomSpeed;
@@ -70,18 +64,18 @@ public class CamManager : MonoBehaviour
 	{
 		if (Input.mouseScrollDelta.y < 0)
 		{
-			if (FreeLookCam?.m_Lens.FieldOfView < 80)
+			if (thirdPersonCam?.m_Lens.FieldOfView < 80)
 			{
 				Debug.Log("Zoom out");
-				FreeLookCam.m_Lens.FieldOfView += zoomSpeed;
+				thirdPersonCam.m_Lens.FieldOfView += zoomSpeed;
 			}
 		}
 		if (Input.mouseScrollDelta.y > 0)
 		{
-			if (FreeLookCam?.m_Lens.FieldOfView > 5)
+			if (thirdPersonCam?.m_Lens.FieldOfView > 5)
 			{
 				Debug.Log("Zoom in");
-				FreeLookCam.m_Lens.FieldOfView -= zoomSpeed;
+				thirdPersonCam.m_Lens.FieldOfView -= zoomSpeed;
 			}
 		}
 	}
