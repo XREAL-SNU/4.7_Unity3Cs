@@ -8,6 +8,9 @@ public class QuickSlotManager : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] List<Sprite> _buttonIcons;
     [SerializeField] List<QuickSlotButton> _quickSlots;
+    [SerializeField] List<Texture> _faceTextures;
+
+    public static List<Texture> s_faceTextures;
 
     public Transform GridLayout;
 
@@ -30,6 +33,13 @@ public class QuickSlotManager : MonoBehaviour, IPointerClickHandler
         for (int i = 0; i < _quickSlots.Count; i++)
         {
             s_quickSlots.Add(_quickSlots[i]);
+        }
+
+        // _faceTextures의 값 모두 추가
+        s_faceTextures = new List<Texture>();
+        for (int i = 0; i < _faceTextures.Count; i++)
+        {
+            s_faceTextures.Add(_faceTextures[i]);
         }
     }
 
