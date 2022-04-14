@@ -16,23 +16,31 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     private float _targetRotation = 0.0f;
     private float _rotationVelocity;
     private float _verticalVelocity;
+    private Rigidbody _charRigidbody;
     protected float _speed;
     protected bool _grounded;
 
     protected Vector2 _input;
     protected bool _isRun;
     protected bool _isJump;
+    protected bool _isPunch;
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
     protected Animator _animator;
     private float _animationBlend;
+    private float jumpPower = 5;
+    private int moveSpeed = 10;
+    private int runSpeed = 20;
 
     protected virtual void Start()
     {
         _controller = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
+        _charRigidbody = GetComponent<Rigidbody>();
         _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        _isJump = false;
+        _isPunch = false;
     }
 
     protected virtual void Update()
@@ -40,16 +48,38 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         // get input
         _input.x = Input.GetAxisRaw("Horizontal");
         _input.y = Input.GetAxisRaw("Vertical");
+       
 
         _isRun = Input.GetKey(KeyCode.LeftShift);
+       
+        
+        if(Input.GetKeyDown(KeyCode.Z) && !_isPunch && !_isJump && _input == Vector2.zero)
+        {
+            Punch();
+            return;
+        } else
+        {
+            _animator.SetBool("Punch", false);
+            _animator.applyRootMotion = true;
+        }
+
+        Vector3 inputDir = new Vector3(_input.x, 0, _input.y).normalized;
+
         _isJump = Input.GetKey(KeyCode.Space);
+        // 이동하는 방향으로 회전
+        transform.LookAt(transform.position + inputDir);
 
-        //Roll();
         Jump();
+      
         GroundCheck();
-        Move();
-
-        //Punch();
+        
+        if (!_isPunch)
+        {
+            if(!_isJump)
+            {
+                Move();
+            }
+        }
     }
 
     private void Move()
@@ -100,10 +130,13 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
     private void Jump()
     {
+        
+
         if (_grounded)
-        {            
-            _animator.SetBool("FreeFall", false);
+        {
             
+            _animator.SetBool("FreeFall", false);
+
             if (_isJump)
             {
                 // v = 2gh. very popular physics equation
@@ -132,28 +165,20 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _grounded = Physics.CheckSphere(transform.position, _groundCheckRadius, GroundLayers, QueryTriggerInteraction.Ignore);
         _animator.SetBool("Grounded", _grounded);
     }
-    /*
-    void Roll()
-    {
-        if (Input.GetKeyDown(KeyCode.Z) && !_isJump && !_isRoll && !_isPunch)
-        {
-            _isRoll = true;
-            _animator.SetTrigger("Roll");
-
-            Invoke("ResetTrigger", 1f);
-        }
-    }
 
     void Punch()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJump && !_isRoll && !_isPunch)
-        {
-            _isRoll = true;
-            _animator.SetTrigger("Punch");
-
-            Invoke("ResetTrigger", 0.3f);
-        }
+        Debug.Log("Punch");
+        _isPunch = true;
+        _animator.applyRootMotion = false;
+        _animator.SetBool("Punch", true);
+        Invoke("ResetTrigger", 0.0f);
     }
 
-    */
+    void ResetTrigger()
+    {
+        _isJump = false;
+        _isPunch = false;
+    }
+
 }
