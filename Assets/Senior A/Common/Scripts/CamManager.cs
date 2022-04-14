@@ -11,6 +11,10 @@ public class CamManager : MonoBehaviour
 	private bool _useMouseToRotateTp;
 	private bool _isCurrentFp;
 
+
+    public float FreeLookCam.m_XAxis.m_MaxSpeed;
+	public float FreeLookCam.m_YAxis.m_MaxSpeed;
+
 	private void Start()
 	{
 		
