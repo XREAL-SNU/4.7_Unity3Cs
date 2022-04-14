@@ -30,13 +30,12 @@ public class PortalManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Teleport();
+            StartCoroutine(Teleport());
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.CompareTag("Player"));
         if (other.CompareTag("Player"))
         {
             _controller = other.GetComponent<CharacterController>();
@@ -49,15 +48,22 @@ public class PortalManager : MonoBehaviour
         _isActive = false;
     }
 
-    private void Teleport()
+    private IEnumerator Teleport()
     {
 
-        this.transform.DORotate(new Vector3(10, 10, 10), 1);
+        this.transform.DORotate(new Vector3(50, 50, 50), 1);
+        yield return new WaitForSeconds(1);
+        _target.transform.DORotate(new Vector3(50, 50, 50), 1);
         _isActive = false;
 
         _controller.enabled = false;
-        _controller.transform.position = _target.spawnPoint.position;
-        _target.transform.DORotate(new Vector3(10, 10, 10), 2);
+        Vector3 newPosition = _target.spawnPoint.position;
+        newPosition.y = (float) 0.0;
+        _controller.transform.position = newPosition;
+
+        _controller.transform.DORotate(new Vector3(10, 0, 0), 1);
+       
+        _controller.transform.rotation = Quaternion.Euler(new Vector3(-10, 0, 0));
         _controller.enabled = true;
     }
 

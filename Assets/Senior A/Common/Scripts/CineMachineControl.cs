@@ -56,9 +56,10 @@ public class CineMachineControl : MonoBehaviour
             Debug.Log(Input.mousePosition);
 
             rotateVector = Input.mousePosition - startPosition;
-            // 마우스 가지고 테스트 해봐야 할듯 ㅎㅎ. 
-            player.transform.rotation = Quaternion.Euler(rotateVector);
-            Debug.Log(player.transform.rotation);
+            rotateVector.z = 0;
+            rotateVector.x = 0;
+            
+            player.transform.rotation = Quaternion.Euler(-1 * rotateVector);
         }
     }
 
