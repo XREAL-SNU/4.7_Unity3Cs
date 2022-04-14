@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     private Dictionary<string, EmotionIconPanel> totalEmotions = new Dictionary<string, EmotionIconPanel>();
     private string[] myEmotionsName = {"afraid", "amazed", "angry", "bored"};
     private Dictionary<string, MyEmotionIconPanel> myEmotions = new Dictionary<string, MyEmotionIconPanel>();
+    private Dictionary<string, Door> Doors = new Dictionary<string, Door>();
     private EmotionIconPanel selectedEmotion = null;
 
     public void AddEmotions(string emotionName, EmotionIconPanel emotionIconPanel)
@@ -38,6 +39,16 @@ public class GameManager : MonoBehaviour
     public void AddMyEmotions(string emotionName, MyEmotionIconPanel myEmotionIconPanel)
     {
         myEmotions.Add(emotionName, myEmotionIconPanel);
+    }
+    public void AddDoor(string doorName, Door door) {
+        Doors.Add(doorName, door);
+    }
+    public Door getDoor(string name) {
+        Door doorOfName = null;
+        if(Doors.ContainsKey(name)) {
+            doorOfName = Doors[name];
+        }
+        return doorOfName;
     }
 
     public EmotionIconPanel getEmotionIconPanel(string name)

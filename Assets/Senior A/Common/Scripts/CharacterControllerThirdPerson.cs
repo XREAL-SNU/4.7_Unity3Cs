@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class CharacterControllerThirdPerson : MonoBehaviour
 {
@@ -25,6 +26,10 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected bool _isJump;
     protected bool _isPunch;
     protected int emotion = 0;
+    private bool canWarp = false;
+    private bool wantWarp;
+    private string startWarp;
+    private string endWarp;
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
@@ -48,6 +53,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _isJump = Input.GetKey(KeyCode.Space);
         _isPunch = Input.GetKey(KeyCode.Z);
         _isMove = !(_input.x == 0 && _input.y == 0);
+        wantWarp = Input.GetKey(KeyCode.B);
         if(Input.GetKeyDown(KeyCode.Alpha1)) {
             emotion = 0;
         }
@@ -60,7 +66,6 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Alpha4)) {
             emotion = 3;
         }
-        Debug.Log(emotion);
 
         //Roll();
         Jump();
@@ -69,6 +74,9 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         Move();
 
         changeFaceEmotion();
+        if(wantWarp && canWarp) {
+            Warp();
+        }
     }
 
     private void Move()
@@ -166,5 +174,28 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
     private void changeFaceEmotion() {
 
+    }
+
+    public void OnTriggerEnter(Collider other) {
+        if(other.gameObject.name == "Door1") {
+            canWarp = true;
+            startWarp = "Door1";
+            endWarp = "Door2";
+        }
+        if(other.gameObject.name == "Door2") {
+            canWarp = true;
+            startWarp = "Door2";
+            endWarp = "Door1";
+        }
+    }
+
+    public void Warp() {
+        canWarp = false;
+        DOTween.Sequence()
+        .Append(transform.DOScale(new Vector3(0.5f, 0.5f, 0.5f), 1f))
+        .Append(transform.DOMove(GameManager.Instance().getDoor(endWarp).transform.position, 1f))
+        .Append(transform.DOScale(new Vector3(1f, 1f, 1f), 1f));
+        GameManager.Instance().getDoor(startWarp).Warp();
+        GameManager.Instance().getDoor(endWarp).Warp();
     }
 }
