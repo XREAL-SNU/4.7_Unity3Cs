@@ -20,6 +20,11 @@ public class QuickSlotManager : MonoBehaviour, IPointerClickHandler
 
     [SerializeField] List<QuickSlotButton> _quickSlotsButton;
     public static List<QuickSlotButton> s_quickSlots;
+
+    [SerializeField] List<Texture> _faceTextures;
+
+    public static List<Texture> s_faceTextures;
+
     void Start()
     {
         for(int i = 0; i < quickSlots.Length; i++)
@@ -46,6 +51,12 @@ public class QuickSlotManager : MonoBehaviour, IPointerClickHandler
         for (int i = 0; i < _quickSlotsButton.Count; i++)
         {
             s_quickSlots.Add(_quickSlotsButton[i]);
+        }
+
+        s_faceTextures = new List<Texture>();
+        for (int i = 0; i < _faceTextures.Count; i++)
+        {
+            s_faceTextures.Add(_faceTextures[i]);
         }
     }
 
@@ -100,5 +111,13 @@ public class QuickSlotManager : MonoBehaviour, IPointerClickHandler
 
 
         return retVal;
+    }
+    public GameObject emotionPanel;
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            emotionPanel.SetActive(true);
+        }
     }
 }
