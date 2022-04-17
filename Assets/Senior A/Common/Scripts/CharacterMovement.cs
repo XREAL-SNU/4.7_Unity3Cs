@@ -48,7 +48,7 @@ public class CharacterMovement : MonoBehaviour
 
     void Punch()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isPunch)
+        if (Input.GetKeyDown(KeyCode.Z) && !_isPunch)
         {
             _isPunch = true;
             _animator.SetTrigger("Punch");
