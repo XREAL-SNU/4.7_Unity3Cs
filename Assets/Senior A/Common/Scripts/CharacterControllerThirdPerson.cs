@@ -51,7 +51,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         GroundCheck();
         Move();
 
-        //Punch();
+        Punch();
     }
 
     private void Move()
@@ -148,17 +148,23 @@ public class CharacterControllerThirdPerson : MonoBehaviour
             Invoke("ResetTrigger", 1f);
         }
     }
+    */
 
     void Punch()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJump && !_isRoll && !_isPunch)
+        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJump && !_isPunch)
         {
-            _isRoll = true;
+
             _animator.SetTrigger("Punch");
 
             Invoke("ResetTrigger", 0.3f);
         }
     }
 
-    */
+    void ResetTrigger()
+    {
+        _isPunch = false;
+    }
+
+
 }
