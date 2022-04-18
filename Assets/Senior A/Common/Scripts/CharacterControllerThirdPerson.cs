@@ -106,8 +106,8 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _animator.SetBool("isRunning", _isRun);
 
         _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * _speedChangeRate);
-        _animator.SetFloat("Speed", _animationBlend);
-        _animator.SetFloat("MotionSpeed", 1.0f);
+        //_animator.SetFloat("Speed", _animationBlend);
+        //_animator.SetFloat("MotionSpeed", 1.0f);
     }
 
     private void Jump()
