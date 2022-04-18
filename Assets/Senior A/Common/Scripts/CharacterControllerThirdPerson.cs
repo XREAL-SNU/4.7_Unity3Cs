@@ -94,6 +94,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
         // animate
         _animator.SetBool("isWalking", inputDirection != Vector3.zero);
+        _animator.SetBool("isRunning", _isRun);
 
         _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * _speedChangeRate);
         _animator.SetFloat("Speed", _animationBlend);
