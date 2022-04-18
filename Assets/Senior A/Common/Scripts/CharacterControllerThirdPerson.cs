@@ -93,6 +93,8 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
         // animate
+        _animator.SetBool("isWalking", inputDirection != Vector3.zero);
+
         _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * _speedChangeRate);
         _animator.SetFloat("Speed", _animationBlend);
         _animator.SetFloat("MotionSpeed", 1.0f);
@@ -101,9 +103,9 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     private void Jump()
     {
         if (_grounded)
-        {            
+        {
             _animator.SetBool("FreeFall", false);
-            
+
             if (_isJump)
             {
                 // v = 2gh. very popular physics equation
