@@ -22,6 +22,8 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected Vector2 _input;
     protected bool _isRun;
     protected bool _isJump;
+    protected bool _isPunch;
+
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
