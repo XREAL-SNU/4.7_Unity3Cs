@@ -20,6 +20,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected bool _grounded;
 
     protected Vector2 _input;
+    protected bool _isWalk;
     protected bool _isRun;
     protected bool _isJump;
     protected bool _isPunch;
@@ -58,7 +59,11 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     {
         // set target speed.
         float targetSpeed = _isRun ? RunSpeed : MoveSpeed;
-        if (_input == Vector2.zero) targetSpeed = 0.0f;
+        if (_input == Vector2.zero)
+        {
+            targetSpeed = 0.0f;
+            _isWalk = false;
+        }
 
         float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
@@ -81,6 +86,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         // again check for approximate 0 input.
         if (_input != Vector2.zero)
         {
+            _isWalk = true;
             // target rotation is with respect to the camera's direction, not the character's forward direction!!
             _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
 
@@ -93,6 +99,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
         // move the player
         _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+
 
         // animate
         _animator.SetBool("isWalking", inputDirection != Vector3.zero);
@@ -152,12 +159,12 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
     void Punch()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJump && !_isPunch)
+        if (Input.GetKeyDown(KeyCode.Z) && !_isJump && !_isPunch && _grounded && !_isWalk)
         {
-
+            _isPunch = true;
             _animator.SetTrigger("Punch");
 
-            Invoke("ResetTrigger", 0.3f);
+            Invoke("ResetTrigger", 0.5f);
         }
     }
 
