@@ -191,10 +191,17 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
     public void Warp() {
         canWarp = false;
+        _controller.enabled = false;
         DOTween.Sequence()
         .Append(transform.DOScale(new Vector3(0.5f, 0.5f, 0.5f), 1f))
         .Append(transform.DOMove(GameManager.Instance().getDoor(endWarp).transform.position, 1f))
-        .Append(transform.DOScale(new Vector3(1f, 1f, 1f), 1f));
+        .Append(transform.DOScale(new Vector3(1f, 1f, 1f), 1f))
+        .AppendCallback(() => {
+            transform.position = GameManager.Instance().getDoor(endWarp).transform.position;
+        })
+        .OnComplete(() => {
+            _controller.enabled = true;
+        });
         GameManager.Instance().getDoor(startWarp).Warp();
         GameManager.Instance().getDoor(endWarp).Warp();
     }
