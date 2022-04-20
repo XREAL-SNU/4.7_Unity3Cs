@@ -8,24 +8,28 @@ using XReal.XTown.UI;
 
 public class MyEmotionIconPanel : UIBase
 {
-    enum Images {
+    enum Images
+    {
         EmotionIcon,
         EmotionImage
     }
 
-    enum Texts {
+    enum Texts
+    {
         EmotionName
     }
 
     private int index;
     private string emotionName;
 
-    private void Start() {
+    private void Start()
+    {
         Init();
 
     }
 
-    public override void Init() {
+    public override void Init()
+    {
         Bind<Image>(typeof(Images));
         Bind<Text>(typeof(Texts));
 
@@ -34,15 +38,17 @@ public class MyEmotionIconPanel : UIBase
         Image emotionImage = GetImage((int)Images.EmotionImage);
         emotionImage.sprite = Resources.Load<Sprite>("Expressions_UI/" + emotionName);
 
-        GameManager.Instance().AddMyEmotions(emotionName, this.GetComponent<MyEmotionIconPanel>());
+        GameManager.Instance().AddMyEmotions(index, this.GetComponent<MyEmotionIconPanel>());
         GetImage((int)Images.EmotionIcon).gameObject.BindEvent(OnClick_changeEmotion);
     }
 
-    public void OnClick_changeEmotion(PointerEventData data) {
+    public void OnClick_changeEmotion(PointerEventData data)
+    {
         GameManager.Instance().changeEmotion(index, this.GetComponent<MyEmotionIconPanel>());
     }
 
-    public void changeEmotion(string _emotionName) {
+    public void changeEmotion(string _emotionName)
+    {
         emotionName = _emotionName;
         Text emotionText = GetText((int)Texts.EmotionName);
         emotionText.text = emotionName;
@@ -50,7 +56,8 @@ public class MyEmotionIconPanel : UIBase
         emotionImage.sprite = Resources.Load<Sprite>("Expressions_UI/" + emotionName);
     }
 
-    public void SetInfo(int _index, string _emotionName) {
+    public void SetInfo(int _index, string _emotionName)
+    {
         index = _index;
         emotionName = _emotionName;
     }

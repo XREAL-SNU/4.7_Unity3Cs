@@ -2988,6 +2988,7 @@ GameObject:
   m_Component:
   - component: {fileID: 448607353721804003}
   - component: {fileID: 6560995417287536842}
+  - component: {fileID: 5850765335253656525}
   m_Layer: 0
   m_Name: Helmet_1
   m_TagString: Untagged
@@ -3124,6 +3125,18 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0007929504, y: 0.15363553, z: -0.6653459}
     m_Extent: {x: 0.20615117, y: 0.103892446, z: 0.19150811}
   m_DirtyAABB: 0
+--- !u!114 &5850765335253656525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4663730973166988282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee573fa0eab854880a37de4149f2eef6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4800041236305716503
 GameObject:
   m_ObjectHideFlags: 0

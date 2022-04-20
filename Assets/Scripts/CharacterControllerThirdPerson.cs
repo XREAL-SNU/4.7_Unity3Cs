@@ -25,11 +25,13 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected bool _isRun;
     protected bool _isJump;
     protected bool _isPunch;
-    protected int emotion = 0;
+    protected int emotion = 4;
     private bool canWarp = false;
     private bool wantWarp;
     private string startWarp;
     private string endWarp;
+    private float emotionDuringTime = 10f;
+    private float remainingEmotionDuringTime;
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
@@ -54,28 +56,65 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _isPunch = Input.GetKey(KeyCode.Z);
         _isMove = !(_input.x == 0 && _input.y == 0);
         wantWarp = Input.GetKey(KeyCode.B);
-        if(Input.GetKeyDown(KeyCode.Alpha1)) {
-            emotion = 0;
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha2)) {
-            emotion = 1;
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha3)) {
-            emotion = 2;
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha4)) {
-            emotion = 3;
-        }
+        calculateRemainingEmotionTime();
+        changeFaceEmotion();
 
-        //Roll();
         Jump();
         Punch();
         GroundCheck();
         Move();
 
-        changeFaceEmotion();
-        if(wantWarp && canWarp) {
+        if (wantWarp && canWarp)
+        {
             Warp();
+        }
+    }
+
+    private void calculateRemainingEmotionTime()
+    {
+        if (emotionKeyDown())
+        {
+            remainingEmotionDuringTime = emotionDuringTime;
+        }
+        else
+        {
+            remainingEmotionDuringTime -= Time.deltaTime;
+        }
+        if (remainingEmotionDuringTime <= 0)
+        {
+            emotion = 4;
+        }
+    }
+
+    private bool emotionKeyDown()
+    {
+        bool keyDown1 = Input.GetKey(KeyCode.Alpha1);
+        bool keyDown2 = Input.GetKey(KeyCode.Alpha2);
+        bool keyDown3 = Input.GetKey(KeyCode.Alpha3);
+        bool keyDown4 = Input.GetKey(KeyCode.Alpha4);
+        if (keyDown1)
+        {
+            emotion = 0;
+        }
+        else if (keyDown2)
+        {
+            emotion = 1;
+        }
+        else if (keyDown3)
+        {
+            emotion = 2;
+        }
+        else if (keyDown4)
+        {
+            emotion = 3;
+        }
+        if (keyDown1 || keyDown2 || keyDown3 || keyDown4)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -128,9 +167,9 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     private void Jump()
     {
         if (_grounded)
-        {            
+        {
             _animator.SetBool("FreeFall", false);
-            
+
             if (_isJump)
             {
                 // v = 2gh. very popular physics equation
@@ -160,46 +199,63 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _animator.SetBool("Grounded", _grounded);
     }
 
-    private void Punch() {
-        if(_grounded) {
-            if(_isPunch && !_isMove) {
+    private void Punch()
+    {
+        if (_grounded)
+        {
+            if (_isPunch && !_isMove)
+            {
                 _animator.SetBool("Punch", true);
                 _animator.applyRootMotion = false;
-            } else {
+            }
+            else
+            {
                 _animator.SetBool("Punch", false);
                 _animator.applyRootMotion = true;
             }
         }
     }
 
-    private void changeFaceEmotion() {
-
+    private void changeFaceEmotion()
+    {
+        string emotionName = "happy";
+        if (emotion != 4)
+        {
+            emotionName = GameManager.Instance().getEmotion(emotion);
+        }
+        GameManager.Instance().getAvatarFaceControl().changeFace(emotionName);
     }
 
-    public void OnTriggerEnter(Collider other) {
-        if(other.gameObject.name == "Door1") {
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.name == "Door1")
+        {
             canWarp = true;
             startWarp = "Door1";
             endWarp = "Door2";
         }
-        if(other.gameObject.name == "Door2") {
+        if (other.gameObject.name == "Door2")
+        {
             canWarp = true;
             startWarp = "Door2";
             endWarp = "Door1";
         }
     }
 
-    public void Warp() {
+    public void Warp()
+    {
         canWarp = false;
         _controller.enabled = false;
         DOTween.Sequence()
         .Append(transform.DOScale(new Vector3(0.5f, 0.5f, 0.5f), 1f))
         .Append(transform.DOMove(GameManager.Instance().getDoor(endWarp).transform.position, 1f))
         .Append(transform.DOScale(new Vector3(1f, 1f, 1f), 1f))
-        .AppendCallback(() => {
+        .AppendCallback(() =>
+        {
             transform.position = GameManager.Instance().getDoor(endWarp).transform.position;
         })
-        .OnComplete(() => {
+        .OnComplete(() =>
+        {
             _controller.enabled = true;
         });
         GameManager.Instance().getDoor(startWarp).Warp();
