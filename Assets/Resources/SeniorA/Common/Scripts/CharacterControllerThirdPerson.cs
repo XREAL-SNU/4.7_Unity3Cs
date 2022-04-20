@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 public class CharacterControllerThirdPerson : MonoBehaviour
 {
     public float MoveSpeed = 10.0f;
@@ -28,12 +28,17 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
     protected Animator _animator;
     private float _animationBlend;
+    //DoTween
+    //private GameObject _characterMesh;
+    private Transform pivot;
 
     protected virtual void Start()
     {
         _controller = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
         _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        //_characterMesh=this.gameObject.transform.GetChild(4).gameObject;//_SpaceSuit
+        pivot=this.transform;
     }
 
     protected virtual void Update()
@@ -170,8 +175,22 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         }
     }
 
-    private void ControllCamera()
+    public void Teleport (CharacterController controller, Vector3 startPosition, Vector3 destination)
     {
-
+        DOTween.Sequence()
+            .Join(transform.DOMove(new Vector3(startPosition.x, transform.position.y, startPosition.z), 1f).SetEase(Ease.OutSine))
+            .Join(pivot.DOLocalMoveX(0.8f, 0.8f)).SetEase(Ease.InOutSine)
+            .Join(pivot.DOLocalMoveY(2, 1.5f)).SetEase(Ease.InExpo)
+            .Join(pivot.DOLocalRotate(new Vector3(0, 360 * 10, 0), 5f, RotateMode.FastBeyond360).SetEase(Ease.InOutSine))
+            .Insert(4.6f, pivot.DOLocalMoveY(1, 0.2f)).SetEase(Ease.OutQuart)
+            .Insert(4.4f, pivot.DOLocalMoveX(0, 0.4f)).SetEase(Ease.OutSine)
+            .Append(pivot.DOLocalMoveY(50, 0.2f)).SetEase(Ease.OutCubic)
+            .AppendCallback(() =>
+            {
+                transform.position = destination;
+                pivot.DOLocalMoveY(0, 0.2f).SetEase(Ease.OutCubic);
+            }
+            )
+            .OnComplete(() => controller.enabled = true);
     }
 }

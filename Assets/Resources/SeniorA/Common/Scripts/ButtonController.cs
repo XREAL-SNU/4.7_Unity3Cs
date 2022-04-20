@@ -30,28 +30,31 @@ public class ButtonController : MonoBehaviour, IPointerClickHandler
         }
         else if (buttonType == _buttonType.QuickSlot)
         {
-            //잘못 이해해서 조금 다르게 구현한듯..
             Debug.Log(_isImaged);
             if (UIManager.Instance().selectedBtn != null)
             {
-                if (_isImaged)//quickSlot에 이미지가 존재한다면
+                int existedNum=UIManager.Instance().CheckIsSameFace();
+                Debug.Log(existedNum);
+                if (existedNum<5)
                 {
-                    Init();
+                    
                     tempImage = buttonImage.sprite;
                     tempText = buttonText.text;
                     buttonImage.sprite = UIManager.Instance().selectedBtn.transform.GetChild(0).gameObject.GetComponent<Image>().sprite;
                     buttonText.text = UIManager.Instance().selectedBtn.transform.GetChild(1).gameObject.GetComponent<Text>().text;
 
-                    UIManager.Instance().selectedBtn.gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = tempImage;
-                    UIManager.Instance().selectedBtn.gameObject.transform.GetChild(1).gameObject.GetComponent<Text>().text = tempText;
+                    UIManager.Instance().quickEmotions[existedNum].gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = tempImage;
+                    UIManager.Instance().quickEmotions[existedNum].gameObject.transform.GetChild(1).gameObject.GetComponent<Text>().text = tempText;
+                    
                 }
-                else if (!_isImaged)//quick slot에 이미지가 없다면
+                else //quick slot에 이미지가 없다면
                 {
                     _isImaged = !_isImaged;
 
                     buttonImage.sprite = UIManager.Instance().selectedBtn.transform.GetChild(0).gameObject.GetComponent<Image>().sprite;
                     buttonText.text = UIManager.Instance().selectedBtn.transform.GetChild(1).gameObject.GetComponent<Text>().text;
                 }
+                
                 UIManager.Instance().selectedBtn = null;
             }
         }
