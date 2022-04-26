@@ -150,7 +150,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     */
     void Punch()
     {
-        if (Input.GetKeyDown(KeyCode.Z) && !_isJump && !_isPunch)
+        if (Input.GetKeyDown(KeyCode.Z) && _grounded && !_isPunch && (_input == Vector2.zero))
         {
             _isPunch = true;
             _animator.SetTrigger("Punch");
