@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class CharacterControllerThirdPerson : MonoBehaviour
 {
@@ -8,6 +9,9 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     public float RunSpeed = 20.0f;
     public float JumpHeight = 2.0f;
     public LayerMask GroundLayers;
+
+    public GameObject Door1;
+    public GameObject Door2;
 
     protected float _speedChangeRate = 10.0f;
     protected float _rotationSmoothTime = 0.12f;
@@ -40,6 +44,11 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
     protected virtual void Update()
     {
+
+        if (!_controller.enabled)
+        {
+            return;
+        }
         // get input
         _input.x = Input.GetAxisRaw("Horizontal");
         _input.y = Input.GetAxisRaw("Vertical");
@@ -53,6 +62,69 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         Move();
 
         Punch();
+
+        if ((Door1.GetComponentInChildren<DoorController>().playerInZone || Door2.GetComponentInChildren<DoorController>().playerInZone)
+            && Input.GetKeyDown(KeyCode.E))
+        {
+
+            Invoke("Teleport", 2);
+
+            //Transform from;
+            //Transform to;
+            //if (Door1.GetComponentInChildren<DoorController>().playerInZone)
+            //{
+            //    from = Door1.transform;
+            //    to = Door2.transform;
+            //}
+            //else
+            //{
+            //    from = Door2.transform;
+            //    to = Door1.transform;
+            //}
+
+            //DOTween.To(setter: value =>
+            //{
+            //    Debug.Log(value);
+
+            //    _controller.Move(Parabola(from.position, to.position, 10, value) - _controller.transform.position);
+            //}, startValue: 0, endValue: 1, duration: 5)
+            //.SetEase(Ease.Linear);
+
+        }
+
+    }
+
+    public void Teleport()
+    {
+        Transform from;
+        Transform to;
+        if (Door1.GetComponentInChildren<DoorController>().playerInZone)
+        {
+            from = Door1.transform;
+            to = Door2.transform;
+        }
+        else
+        {
+            from = Door2.transform;
+            to = Door1.transform;
+        }
+
+        DOTween.To(setter: value =>
+        {
+            Debug.Log(value);
+
+            _controller.Move(Parabola(from.position, to.position, 10, value) - _controller.transform.position);
+        }, startValue: 0, endValue: 1, duration: 5)
+        .SetEase(Ease.Linear);
+    }
+
+    public static Vector3 Parabola(Vector3 start, Vector3 end, float height, float t)
+    {
+        float Func(float x) => 4 * (-height * x * x + height * x);
+
+        var mid = Vector3.Lerp(start, end, t);
+
+        return new Vector3(mid.x, Func(t) + Mathf.Lerp(start.y, end.y, t), mid.z);
     }
 
     private void Move()
