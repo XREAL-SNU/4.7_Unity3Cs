@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class CharacterControllerThirdPerson : MonoBehaviour
 {
@@ -8,6 +9,9 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     public float RunSpeed = 20.0f;
     public float JumpHeight = 2.0f;
     public LayerMask GroundLayers;
+
+    public GameObject Door1;
+    public GameObject Door2;
 
     protected float _speedChangeRate = 10.0f;
     protected float _rotationSmoothTime = 0.12f;
@@ -20,8 +24,11 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected bool _grounded;
 
     protected Vector2 _input;
+    protected bool _isWalk;
     protected bool _isRun;
     protected bool _isJump;
+    protected bool _isPunch;
+
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
@@ -37,6 +44,11 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
     protected virtual void Update()
     {
+
+        if (!_controller.enabled)
+        {
+            return;
+        }
         // get input
         _input.x = Input.GetAxisRaw("Horizontal");
         _input.y = Input.GetAxisRaw("Vertical");
@@ -49,14 +61,81 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         GroundCheck();
         Move();
 
-        //Punch();
+        Punch();
+
+        if ((Door1.GetComponentInChildren<DoorController>().playerInZone || Door2.GetComponentInChildren<DoorController>().playerInZone)
+            && Input.GetKeyDown(KeyCode.E))
+        {
+
+            Invoke("Teleport", 2);
+
+            //Transform from;
+            //Transform to;
+            //if (Door1.GetComponentInChildren<DoorController>().playerInZone)
+            //{
+            //    from = Door1.transform;
+            //    to = Door2.transform;
+            //}
+            //else
+            //{
+            //    from = Door2.transform;
+            //    to = Door1.transform;
+            //}
+
+            //DOTween.To(setter: value =>
+            //{
+            //    Debug.Log(value);
+
+            //    _controller.Move(Parabola(from.position, to.position, 10, value) - _controller.transform.position);
+            //}, startValue: 0, endValue: 1, duration: 5)
+            //.SetEase(Ease.Linear);
+
+        }
+
+    }
+
+    public void Teleport()
+    {
+        Transform from;
+        Transform to;
+        if (Door1.GetComponentInChildren<DoorController>().playerInZone)
+        {
+            from = Door1.transform;
+            to = Door2.transform;
+        }
+        else
+        {
+            from = Door2.transform;
+            to = Door1.transform;
+        }
+
+        DOTween.To(setter: value =>
+        {
+            Debug.Log(value);
+
+            _controller.Move(Parabola(from.position, to.position, 10, value) - _controller.transform.position);
+        }, startValue: 0, endValue: 1, duration: 5)
+        .SetEase(Ease.Linear);
+    }
+
+    public static Vector3 Parabola(Vector3 start, Vector3 end, float height, float t)
+    {
+        float Func(float x) => 4 * (-height * x * x + height * x);
+
+        var mid = Vector3.Lerp(start, end, t);
+
+        return new Vector3(mid.x, Func(t) + Mathf.Lerp(start.y, end.y, t), mid.z);
     }
 
     private void Move()
     {
         // set target speed.
         float targetSpeed = _isRun ? RunSpeed : MoveSpeed;
-        if (_input == Vector2.zero) targetSpeed = 0.0f;
+        if (_input == Vector2.zero)
+        {
+            targetSpeed = 0.0f;
+            _isWalk = false;
+        }
 
         float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
@@ -79,6 +158,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         // again check for approximate 0 input.
         if (_input != Vector2.zero)
         {
+            _isWalk = true;
             // target rotation is with respect to the camera's direction, not the character's forward direction!!
             _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
 
@@ -92,18 +172,22 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         // move the player
         _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
+
         // animate
+        _animator.SetBool("isWalking", inputDirection != Vector3.zero);
+        _animator.SetBool("isRunning", _isRun);
+
         _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * _speedChangeRate);
-        _animator.SetFloat("Speed", _animationBlend);
-        _animator.SetFloat("MotionSpeed", 1.0f);
+        //_animator.SetFloat("Speed", _animationBlend);
+        //_animator.SetFloat("MotionSpeed", 1.0f);
     }
 
     private void Jump()
     {
         if (_grounded)
-        {            
+        {
             _animator.SetBool("FreeFall", false);
-            
+
             if (_isJump)
             {
                 // v = 2gh. very popular physics equation
@@ -143,17 +227,23 @@ public class CharacterControllerThirdPerson : MonoBehaviour
             Invoke("ResetTrigger", 1f);
         }
     }
+    */
 
     void Punch()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJump && !_isRoll && !_isPunch)
+        if (Input.GetKeyDown(KeyCode.Z) && !_isJump && !_isPunch && _grounded && !_isWalk)
         {
-            _isRoll = true;
+            _isPunch = true;
             _animator.SetTrigger("Punch");
 
-            Invoke("ResetTrigger", 0.3f);
+            Invoke("ResetTrigger", 0.5f);
         }
     }
 
-    */
+    void ResetTrigger()
+    {
+        _isPunch = false;
+    }
+
+
 }
