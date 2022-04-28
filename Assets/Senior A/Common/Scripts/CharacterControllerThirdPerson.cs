@@ -22,6 +22,8 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected Vector2 _input;
     protected bool _isRun;
     protected bool _isJump;
+    protected bool _isPunch;
+
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
@@ -33,6 +35,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _controller = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
         _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        _isPunch = false;
     }
 
     protected virtual void Update()
@@ -43,13 +46,14 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
         _isRun = Input.GetKey(KeyCode.LeftShift);
         _isJump = Input.GetKey(KeyCode.Space);
+        //_isPunch = Input.GetKey(KeyCode.Z);
 
         //Roll();
+        
         Jump();
-        GroundCheck();
         Move();
-
-        //Punch();
+        GroundCheck();
+        Punch();
     }
 
     private void Move()
@@ -143,17 +147,19 @@ public class CharacterControllerThirdPerson : MonoBehaviour
             Invoke("ResetTrigger", 1f);
         }
     }
-
+    */
     void Punch()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJump && !_isRoll && !_isPunch)
+        if (Input.GetKeyDown(KeyCode.Z) && _grounded && !_isPunch && (_input == Vector2.zero))
         {
-            _isRoll = true;
+            _isPunch = true;
             _animator.SetTrigger("Punch");
-
             Invoke("ResetTrigger", 0.3f);
         }
     }
 
-    */
+    void ResetTrigger()
+    {
+        _isPunch = false;
+    }
 }
