@@ -221,7 +221,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         string emotionName = "happy";
         if (emotion != 4)
         {
-            emotionName = GameManager.Instance().getEmotion(emotion);
+            emotionName = EmotionManager.getEmotionManager().getEmotion(emotion);
         }
         GameManager.Instance().getAvatarFaceControl().changeFace(emotionName);
     }

@@ -8,16 +8,18 @@ using XReal.XTown.UI;
 
 public class EmotionsPanel : UIPopup
 {
-    enum Buttons {
+    enum Buttons
+    {
         CloseButton
     }
 
-    enum GameObjects {
+    enum GameObjects
+    {
         MyEmotionsContainer,
         ScrollContent
     }
-    private string[] emotionsName = {"afraid", "amazed", "angry", "bored", "calm", "cool", "disgust", "excited", "fear", "funny", "guilty", "happy", "nervous", "playful", "sad", "shy", "sleepy", "surprised", "thoughtful", "tired", "worried"};
-    private string[] myEmotionsName = {"afraid", "amazed", "angry", "bored"};
+    private string[] emotionsName = { "afraid", "amazed", "angry", "bored", "calm", "cool", "disgust", "excited", "fear", "funny", "guilty", "happy", "nervous", "playful", "sad", "shy", "sleepy", "surprised", "thoughtful", "tired", "worried" };
+    private string[] myEmotionsName = { "afraid", "amazed", "angry", "bored" };
 
 
     private void Start()
@@ -37,13 +39,17 @@ public class EmotionsPanel : UIPopup
         scrollContent.BindEvent(OnClick_Panel);
         GameObject myEmotionsContainer = GetUIComponent<GameObject>((int)GameObjects.MyEmotionsContainer);
 
-        foreach(string emotionName in emotionsName) {
+
+        foreach (EmotionNames emotionName in Enum.GetValues(typeof(EmotionNames)))
+        {
             GameObject emotionIconPanel = UIManager.UI.MakeSubItem<EmotionIconPanel>(scrollContent.transform).gameObject;
             EmotionIconPanel emotionIconPanelScript = emotionIconPanel.GetOrAddComponent<EmotionIconPanel>();
-            emotionIconPanelScript.SetInfo(emotionName);
+            emotionIconPanelScript.SetInfo(emotionName.ToString());
         }
         int index = 0;
-        foreach(string emotionName in myEmotionsName) {
+        string[] customEmotionsName = EmotionManager.getEmotionManager().getCustomEmotionNames();
+        foreach (string emotionName in customEmotionsName)
+        {
             GameObject myEmotionIconPanel = UIManager.UI.MakeSubItem<MyEmotionIconPanel>(myEmotionsContainer.transform).gameObject;
             MyEmotionIconPanel myEmotionIconPanelScript = myEmotionIconPanel.GetOrAddComponent<MyEmotionIconPanel>();
             myEmotionIconPanelScript.SetInfo(index, emotionName);
@@ -51,12 +57,14 @@ public class EmotionsPanel : UIPopup
         }
     }
 
-    public void OnClick_Panel(PointerEventData data) {
+    public void OnClick_Panel(PointerEventData data)
+    {
         GameManager.Instance().selectEmotion(null);
     }
 
     public void OnClick_Close(PointerEventData data)
     {
+        EmotionManager.getEmotionManager().clearMyEmotionIconPanelsList();
         ClosePopup();
     }
 }

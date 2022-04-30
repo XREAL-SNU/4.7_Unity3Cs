@@ -38,7 +38,7 @@ public class MyEmotionIconPanel : UIBase
         Image emotionImage = GetImage((int)Images.EmotionImage);
         emotionImage.sprite = Resources.Load<Sprite>("Expressions_UI/" + emotionName);
 
-        GameManager.Instance().AddMyEmotions(index, this.GetComponent<MyEmotionIconPanel>());
+        EmotionManager.getEmotionManager().addMyEmotionIconPanelsList(this.GetComponent<MyEmotionIconPanel>());
         GetImage((int)Images.EmotionIcon).gameObject.BindEvent(OnClick_changeEmotion);
     }
 
@@ -61,5 +61,6 @@ public class MyEmotionIconPanel : UIBase
         index = _index;
         emotionName = _emotionName;
     }
+
 
 }

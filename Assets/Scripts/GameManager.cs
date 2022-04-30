@@ -27,21 +27,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private Dictionary<string, EmotionIconPanel> totalEmotions = new Dictionary<string, EmotionIconPanel>();
-    private string[] myEmotionsName = { "afraid", "amazed", "angry", "bored" };
-    private Dictionary<int, MyEmotionIconPanel> myEmotions = new Dictionary<int, MyEmotionIconPanel>();
     private Dictionary<string, Door> Doors = new Dictionary<string, Door>();
     private EmotionIconPanel selectedEmotion = null;
     private AvatarFaceControl avatarFaceControl = null;
-
-    public void AddEmotions(string emotionName, EmotionIconPanel emotionIconPanel)
-    {
-        totalEmotions.Add(emotionName, emotionIconPanel);
-    }
-    public void AddMyEmotions(int index, MyEmotionIconPanel myEmotionIconPanel)
-    {
-        myEmotions.Add(index, myEmotionIconPanel);
-    }
     public void AddDoor(string doorName, Door door)
     {
         Doors.Add(doorName, door);
@@ -58,21 +46,6 @@ public class GameManager : MonoBehaviour
             doorOfName = Doors[name];
         }
         return doorOfName;
-    }
-
-    public EmotionIconPanel getEmotionIconPanel(string name)
-    {
-        EmotionIconPanel emotionOfName = null;
-        if (totalEmotions.ContainsKey(name))
-        {
-            emotionOfName = totalEmotions[name];
-        }
-        return emotionOfName;
-    }
-
-    public string getMyEmtionIconPanel(int index)
-    {
-        return myEmotionsName[index];
     }
     public AvatarFaceControl getAvatarFaceControl()
     {
@@ -96,26 +69,10 @@ public class GameManager : MonoBehaviour
     {
         if (selectedEmotion != null)
         {
-            compareSameEmotion(index);
-            myEmotionsName[index] = selectedEmotion.getName();
-            _currentEmotion.changeEmotion(selectedEmotion.getName());
+            EmotionManager.getEmotionManager().changeCustomEmotions(index, selectedEmotion.getName());
             selectedEmotion.unClicked();
             selectedEmotion = null;
         }
-    }
-    public void compareSameEmotion(int index)
-    {
-        int idx = Array.IndexOf(myEmotionsName, selectedEmotion.getName());
-        if (idx >= 0)
-        {
-            myEmotions[idx].changeEmotion(myEmotionsName[index]);
-            myEmotionsName[idx] = myEmotionsName[index];
-        }
-    }
-
-    public string getEmotion(int index)
-    {
-        return myEmotionsName[index];
     }
 
 }
