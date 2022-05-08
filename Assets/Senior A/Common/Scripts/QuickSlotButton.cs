@@ -11,6 +11,8 @@ public class QuickSlotButton : MonoBehaviour, ISelectHandler, IPointerClickHandl
     public _ButtonType ButtonType;
     public Image ButtonImage;
     public Text ButtonText;
+    public int fid;
+
     public void OnSelect(BaseEventData eventData)
     {
         if (ButtonType == _ButtonType.Viewport)
@@ -23,7 +25,7 @@ public class QuickSlotButton : MonoBehaviour, ISelectHandler, IPointerClickHandl
     {
         if (ButtonType == _ButtonType.Quickslot && QuickSlotManager.CurrentlySelected != null)
         {
-
+            QuickSlotManager.AddToQuickSlot(this);
         }
 
     }
