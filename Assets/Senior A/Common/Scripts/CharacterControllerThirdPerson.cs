@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,7 +22,9 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
     protected Vector2 _input;
     protected bool _isRun;
-    protected bool _isJump;
+    protected bool _isJump = false;
+    protected bool _isPunch = false;
+    protected bool _isWalk = false;
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
@@ -43,13 +46,30 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 
         _isRun = Input.GetKey(KeyCode.LeftShift);
         _isJump = Input.GetKey(KeyCode.Space);
-
+        _isPunch = Input.GetKeyDown(KeyCode.Z);
+        _isWalk = _input.x != 0.0f || _input.y != 0.0f;
         //Roll();
         Jump();
         GroundCheck();
         Move();
+        Punch();
+    }
 
-        //Punch();
+    private void Punch()
+    {
+        if (!_isJump && !_isRun && _isPunch && !_isWalk)
+        {
+            _isPunch = true;
+            _animator.SetTrigger("Punch");
+
+            Invoke("ResetTrigger", 0.5f);
+        }
+    }
+
+    void ResetTrigger()
+    {
+        _isPunch = false;
+        _animator.SetBool("Punch", false);
     }
 
     private void Move()
