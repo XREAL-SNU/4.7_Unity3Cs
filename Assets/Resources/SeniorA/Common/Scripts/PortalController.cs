@@ -14,7 +14,7 @@ public class PortalController : MonoBehaviour
     private Sequence portalSequence;
     void Start()
     {
-        player=GameObject.FindGameObjectWithTag("Player");
+        //player=GameObject.FindGameObjectWithTag("Player");
         characterController=player.GetComponent<CharacterController>();
         pivot=this.gameObject.transform;
 
@@ -37,13 +37,11 @@ public class PortalController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other) 
     {
-        Debug.Log("Enter");
         isTrigger=true;
     }    
 
     private void OnTriggerExit(Collider other) 
     {
-        Debug.Log("Exit");
         isTrigger=false;
     }  
 
@@ -55,7 +53,7 @@ public class PortalController : MonoBehaviour
         portalSequence.Rewind();
         portalSequence.Play();
 
-         CharacterControllerThirdPerson characterAnim = characterController.GetComponent<CharacterControllerThirdPerson>();
+         PlayerControllerMulti characterAnim = characterController.GetComponent<PlayerControllerMulti>();
         characterAnim.Teleport(characterController, transform.position, targetPlace.transform.position);
     }
 }

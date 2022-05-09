@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-public class CharacterControllerThirdPerson : MonoBehaviour
+using Photon.Pun;
+
+public class CharacterControllerThirdPerson : MonoBehaviour, IPunInstantiateMagicCallback
 {
     public float MoveSpeed = 10.0f;
     public float RunSpeed = 20.0f;
@@ -192,5 +194,13 @@ public class CharacterControllerThirdPerson : MonoBehaviour
             }
             )
             .OnComplete(() => controller.enabled = true);
+    }
+
+    //Synchronize
+    //이부분 왜??
+    public void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        info.Sender.TagObject=this.gameObject;
+        Debug.Log($"Player {info.Sender.NickName}'s Avartar is Instantiated/t={info.SentServerTime}");
     }
 }
