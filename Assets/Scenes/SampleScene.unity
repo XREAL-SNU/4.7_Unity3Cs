@@ -6265,6 +6265,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
+    - target: {fileID: 4816776414064020807, guid: 666fce5f0722eac4db0b3bc6eca61743, type: 3}
+      propertyPath: sceneViewId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7769683170115529551, guid: 666fce5f0722eac4db0b3bc6eca61743, type: 3}
       propertyPath: m_Lightmapping
       value: 2

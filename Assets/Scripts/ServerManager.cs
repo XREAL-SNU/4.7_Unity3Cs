@@ -4,6 +4,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ServerManager : MonoBehaviourPunCallbacks
 {
@@ -12,7 +13,16 @@ public class ServerManager : MonoBehaviourPunCallbacks
         return instance;
     }
 
-    private void Awake() {
+    public override void OnEnable() {
+        base.OnEnable();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    public override void OnDisable() {
+        base.OnDisable();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    public void Awake() {
         if(instance == null) {
             instance = this;
             DontDestroyOnLoad(this.gameObject);
@@ -22,10 +32,11 @@ public class ServerManager : MonoBehaviourPunCallbacks
             }
         }
     }
+    private static int playerNumber = 1;
     private string nickName = "Player";
     private string gameVersion = "0.0.1";
 
-    private void Start() {
+    public void Start() {
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.NickName = nickName;
         PhotonNetwork.GameVersion = gameVersion;
@@ -37,12 +48,20 @@ public class ServerManager : MonoBehaviourPunCallbacks
     }
 
     public override void OnJoinedLobby() {
+        Debug.Log("JoinedLobby");
         bool joinedRoom = PhotonNetwork.JoinRandomRoom();
     }
 
     public override void OnJoinedRoom() {
+        Debug.Log("JoinedRoom");
         if(PhotonNetwork.IsMasterClient) {
-            PhotonNetwork.LoadLevel(1);
+            PhotonNetwork.LoadLevel("SampleScene");
+        }
+    }
+
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        if(PhotonNetwork.OfflineMode || PhotonNetwork.InRoom) {
+            InitPlayer();
         }
     }
 
@@ -50,8 +69,19 @@ public class ServerManager : MonoBehaviourPunCallbacks
         PhotonNetwork.CreateRoom("New Room", new RoomOptions());
     }
 
+    public override void OnPlayerEnteredRoom(Player newPlayer) {
+        Debug.Log($"Player {newPlayer.NickName} joined");
+    }
+
     public override void OnDisconnected(DisconnectCause cause) {
         Debug.Log("Disconnected from server" + cause.ToString());
         Application.Quit();
+    }
+
+    private int player = -23;
+
+    private void InitPlayer() {
+        PhotonNetwork.Instantiate("Prefabs/Character", new Vector3(0, 3, player), Quaternion.identity, 0);
+        player++;
     }
 }
