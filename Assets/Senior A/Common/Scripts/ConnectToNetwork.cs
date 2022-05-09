@@ -3,6 +3,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class ConnectToNetwork : MonoBehaviourPunCallbacks
 {
@@ -69,5 +70,16 @@ public class ConnectToNetwork : MonoBehaviourPunCallbacks
 	{
 		Debug.Log("Disconnected from server: " + cause.ToString());
 		Application.Quit();
+	}
+
+	void InitializePlayer() //이 함수를 실행하는 타이밍을 언제로 잡지?
+	{
+		var prefab = (GameObject)Resources.Load("PlayerFollowCamera");
+		var cam = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+		cam.name = "PlayerFollowCamera";
+
+		var player = PhotonNetwork.Instantiate("PhotonPrefab/CharacterPrefab", Vector3.zero, Quaternion.identity);
+		// 우선 freelook 으로 걸어둠.
+		if (cam != null && player != null) cam.GetComponent<CinemachineFreeLook>().Follow = player.transform.Find("FollowTarget");
 	}
 }

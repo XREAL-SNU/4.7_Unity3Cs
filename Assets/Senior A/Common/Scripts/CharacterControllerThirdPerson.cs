@@ -6,7 +6,8 @@ public class CharacterControllerThirdPerson : MonoBehaviour
 {
     public float MoveSpeed = 10.0f;
     public float RunSpeed = 20.0f;
-    public float JumpHeight = 2.0f;
+    public float JumpPower = 5.0f;
+    //public float JumpHeight = 2.0f;
     public LayerMask GroundLayers;
 
     protected float _speedChangeRate = 10.0f;
@@ -22,17 +23,25 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected Vector2 _input;
     protected bool _isRun;
     protected bool _isJump;
+    private bool _isPunch;
+
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
     protected Animator _animator;
     private float _animationBlend;
 
+    private Rigidbody _charRigidbody;
+
     protected virtual void Start()
     {
         _controller = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
         _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+
+
+        _charRigidbody = GetComponent<Rigidbody>();
+        _animator = GetComponent<Animator>();
     }
 
     protected virtual void Update()
@@ -48,8 +57,35 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         Jump();
         GroundCheck();
         Move();
+        Punch();
 
-        //Punch();
+        float hAxis = Input.GetAxisRaw("Horizontal");
+        float vAxis = Input.GetAxisRaw("Vertical");
+
+        bool isRun = Input.GetKey(KeyCode.LeftShift);
+        Punch();
+
+        // 이동하고자 하는 방향 계산
+        Vector3 inputDir = new Vector3(hAxis, 0, vAxis).normalized;
+
+        // 이동하는 방향으로 회전
+        transform.LookAt(transform.position + inputDir);
+
+        if (!_isPunch)
+        {
+            if (!isRun)
+            {
+                _charRigidbody.MovePosition(_charRigidbody.position + inputDir * MoveSpeed * Time.deltaTime);
+            }
+            else
+            {
+                _charRigidbody.MovePosition(_charRigidbody.position + inputDir * RunSpeed * Time.deltaTime);
+            }
+
+            _animator.SetBool("isWalking", inputDir != Vector3.zero);
+            _animator.SetBool("isRunning", isRun);
+        }
+
     }
 
     private void Move()
@@ -98,18 +134,21 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _animator.SetFloat("MotionSpeed", 1.0f);
     }
 
-    private void Jump()
+    void Jump()
     {
         if (_grounded)
-        {            
+        {
             _animator.SetBool("FreeFall", false);
-            
-            if (_isJump)
+
+            if (Input.GetKeyDown(KeyCode.Space) && !_isJump && !_isPunch)
             {
-                // v = 2gh. very popular physics equation
-                _verticalVelocity = Mathf.Sqrt(JumpHeight * 2f * 9.8f);
-                _animator.SetBool("Jump", true);
+                _isJump = true;
+                _animator.SetTrigger("Jump");
+                _charRigidbody.AddForce(Vector3.up * JumpPower, ForceMode.Impulse);
+
+                Invoke("ResetTrigger", 1f);
             }
+            
             else
             {
                 _animator.SetBool("Jump", false);
@@ -122,16 +161,66 @@ public class CharacterControllerThirdPerson : MonoBehaviour
             _animator.SetBool("FreeFall", true);
         }
 
-        // not using rigidbody.useGravity -> must apply gravity yourself!
-        _verticalVelocity -= 9.8f * Time.deltaTime;
+
     }
 
+    void Punch()
+    {
+        if (Input.GetKeyDown(KeyCode.Z) && !_isPunch && !_isJump)
+        {
+            _isPunch = true;
+            _animator.SetTrigger("Punch");
+
+            Invoke("ResetTrigger", 1f);
+            _animator.SetBool("FreeFall", true);
+
+            Debug.Log("Punch");
+        }
+    }
+
+    void ResetTrigger()
+    {
+        _isPunch = false;
+        _isJump = false;
+    }
     private void GroundCheck()
     {
         // set sphere position, with offset
         _grounded = Physics.CheckSphere(transform.position, _groundCheckRadius, GroundLayers, QueryTriggerInteraction.Ignore);
         _animator.SetBool("Grounded", _grounded);
     }
+
+    /*
+private void Jump()
+{
+    if (_grounded)
+    {            
+        _animator.SetBool("FreeFall", false);
+
+        if (_isJump)
+        {
+            // v = 2gh. very popular physics equation
+            _verticalVelocity = Mathf.Sqrt(JumpHeight * 2f * 9.8f);
+            _animator.SetBool("Jump", true);
+        }
+        else
+        {
+            _animator.SetBool("Jump", false);
+        }
+    }
+    else
+    {
+        // do not allow jump while in air.
+        _isJump = false;
+        _animator.SetBool("FreeFall", true);
+    }
+
+    // not using rigidbody.useGravity -> must apply gravity yourself!
+    _verticalVelocity -= 9.8f * Time.deltaTime;
+}
+*/
+
+
     /*
     void Roll()
     {
