@@ -22,7 +22,8 @@
 //        float hAxis = Input.GetAxisRaw("Horizontal");
 //        float vAxis = Input.GetAxisRaw("Vertical");
 
-//        bool isRun = Input.GetKey(KeyCode.LeftShift);
+//        bool isRun = Input.
+//        KeyCode.LeftShift);
 //        Punch();
 
 //        // 이동하고자 하는 방향 계산
