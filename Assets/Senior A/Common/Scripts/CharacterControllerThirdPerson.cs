@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +23,8 @@ public class CharacterControllerThirdPerson : MonoBehaviour
     protected Vector2 _input;
     protected bool _isRun;
     protected bool _isJump;
+    protected bool _isRoll;
+    protected bool _isPunch;
     protected CharacterController _controller;
     protected GameObject _mainCamera;
 
@@ -44,58 +47,27 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _isRun = Input.GetKey(KeyCode.LeftShift);
         _isJump = Input.GetKey(KeyCode.Space);
 
-        //Roll();
+        Roll();
         Jump();
         GroundCheck();
         Move();
 
-        //Punch();
+        Punch();
+    }
+
+    private void Punch()
+    {
+    
+    }
+
+    private void Roll()
+    {
+ 
     }
 
     private void Move()
     {
-        // set target speed.
-        float targetSpeed = _isRun ? RunSpeed : MoveSpeed;
-        if (_input == Vector2.zero) targetSpeed = 0.0f;
-
-        float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
-
-
-        float speedOffset = 0.1f;
-        // accelerate or decelerate to target speed
-        if (currentHorizontalSpeed < targetSpeed - speedOffset || currentHorizontalSpeed > targetSpeed + speedOffset)
-        {
-            // Lerping to speed
-            _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed, Time.deltaTime * _speedChangeRate);
-            _speed = Mathf.Round(_speed * 1000f) / 1000f;
-        }
-        else
-        {
-            _speed = targetSpeed;
-        }
-
-        Vector3 inputDirection = new Vector3(_input.x, 0.0f, _input.y).normalized;
-
-        // again check for approximate 0 input.
-        if (_input != Vector2.zero)
-        {
-            // target rotation is with respect to the camera's direction, not the character's forward direction!!
-            _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
-
-            // rotate character in y axis towards the target rotation. SmoothDampAngle smooths the rotation.
-            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _rotationSmoothTime);
-            transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-        }
-
-        Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
-
-        // move the player
-        _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-
-        // animate
-        _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * _speedChangeRate);
-        _animator.SetFloat("Speed", _animationBlend);
-        _animator.SetFloat("MotionSpeed", 1.0f);
+        
     }
 
     private void Jump()
@@ -132,28 +104,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         _grounded = Physics.CheckSphere(transform.position, _groundCheckRadius, GroundLayers, QueryTriggerInteraction.Ignore);
         _animator.SetBool("Grounded", _grounded);
     }
-    /*
-    void Roll()
-    {
-        if (Input.GetKeyDown(KeyCode.Z) && !_isJump && !_isRoll && !_isPunch)
-        {
-            _isRoll = true;
-            _animator.SetTrigger("Roll");
+    
 
-            Invoke("ResetTrigger", 1f);
-        }
-    }
-
-    void Punch()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJump && !_isRoll && !_isPunch)
-        {
-            _isRoll = true;
-            _animator.SetTrigger("Punch");
-
-            Invoke("ResetTrigger", 0.3f);
-        }
-    }
-
-    */
+    
 }
