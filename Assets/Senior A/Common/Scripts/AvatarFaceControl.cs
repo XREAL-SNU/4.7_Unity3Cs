@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Photon.Pun;
 
 public class AvatarFaceControl : MonoBehaviour
 {
@@ -37,7 +38,17 @@ public class AvatarFaceControl : MonoBehaviour
         _crRunning = false;
     }
 
-    void ShowFace(int index)
+    private void Update()
+    {
+        //if (!PhotonView.Get(this).IsMine) return;
+        if (Input.GetKeyUp(KeyCode.Alpha1)) PhotonView.Get(this).RPC("ShowFace", RpcTarget.All, (byte)0);
+        if (Input.GetKeyUp(KeyCode.Alpha2)) PhotonView.Get(this).RPC("ShowFace", RpcTarget.All, (byte)1);
+        if (Input.GetKeyUp(KeyCode.Alpha3)) PhotonView.Get(this).RPC("ShowFace", RpcTarget.All, (byte)2);
+        if (Input.GetKeyUp(KeyCode.Alpha4)) PhotonView.Get(this).RPC("ShowFace", RpcTarget.All, (byte)3);
+    }
+
+    [PunRPC]
+    void ShowFace(byte index)
     {
         if (_crRunning && _coroutine != null)
         {
@@ -46,17 +57,5 @@ public class AvatarFaceControl : MonoBehaviour
 
         _coroutine = ShowFaceCoroutine(index);
         StartCoroutine(_coroutine);
-    }
-
-    void Update()
-    {
-        if (Input.GetKey(KeyCode.Alpha1))
-            ShowFace(QuickSlotManager.s_quickSlots[0].fid);
-        if (Input.GetKey(KeyCode.Alpha2))
-            ShowFace(QuickSlotManager.s_quickSlots[1].fid);
-        if (Input.GetKey(KeyCode.Alpha3))
-            ShowFace(QuickSlotManager.s_quickSlots[2].fid);
-        if (Input.GetKey(KeyCode.Alpha4))
-            ShowFace(QuickSlotManager.s_quickSlots[3].fid);
     }
 }

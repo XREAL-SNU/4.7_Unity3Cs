@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using Photon.Pun;
 
-public class CharacterMovement : MonoBehaviour
+public class CharacterMovement : MonoBehaviourPunCallbacks
 {
     float moveSpeed = 1f;
     float runSpeed = 3.0f;
@@ -18,23 +19,14 @@ public class CharacterMovement : MonoBehaviour
 
     public static bool isGoing;
 
-    private Vector3 _pos;
-    float _targetX = 3;
-    float _targetY = 3;
-    float _tweeningDuration = 2;
-
-    Sequence _mySequence;
-
-    void Start()
+    protected virtual void Awake()
     {
         _charRigidbody = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
 
-        //_mySequence = DOTween.Sequence().Append(transform.DOMoveX(_targetX, _tweeningDuration).SetEase(Ease.Linear)).Append(transform.DOMoveY(_targetY, _tweeningDuration).SetEase(Ease.Linear));
-
     }
 
-    void Update()
+    public virtual void Update()
     {
         float hAxis = Input.GetAxisRaw("Horizontal");
         float vAxis = Input.GetAxisRaw("Vertical");
@@ -50,11 +42,11 @@ public class CharacterMovement : MonoBehaviour
         {
             if (!isRun)
             {
-                _charRigidbody.MovePosition(_charRigidbody.position + inputDir * moveSpeed * Time.deltaTime);
+                _charRigidbody.MovePosition(_charRigidbody.transform.position + inputDir * moveSpeed * Time.deltaTime);
             }
             else
             {
-                _charRigidbody.MovePosition(_charRigidbody.position + inputDir * runSpeed * Time.deltaTime);
+                _charRigidbody.MovePosition(_charRigidbody.transform.position + inputDir * runSpeed * Time.deltaTime);
             }
         }
         
@@ -68,7 +60,7 @@ public class CharacterMovement : MonoBehaviour
      
     }
 
-    void Jump()
+    protected void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space) && !_isJump && !_isPunch)
         {
@@ -78,7 +70,7 @@ public class CharacterMovement : MonoBehaviour
             Invoke("ResetTrigger", 1f);
         }
     }
-    void Punch()
+    protected void Punch()
     {
         if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJump && !_isPunch)
         {
@@ -88,7 +80,7 @@ public class CharacterMovement : MonoBehaviour
             Invoke("ResetTrigger", 0.5f);
         }
     }
-    void ResetTrigger()
+    protected void ResetTrigger()
     {
         _isJump = false;
         _isPunch = false;
@@ -109,7 +101,6 @@ public class CharacterMovement : MonoBehaviour
 
     void Going()
     {
-       // transform.SetParent(targetTransform);
         transform.position = targetTransform.transform.position;
     }
 }
