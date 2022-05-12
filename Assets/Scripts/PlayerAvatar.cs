@@ -20,7 +20,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
 
     public void OnPhotonInstantiate(PhotonMessageInfo info) {
         info.Sender.TagObject = this.gameObject;
-        CameraManager.getCameraManager().PlayerInstantiated();   
+        CameraManager.getCameraManager().PlayerInstantiated();
         Debug.Log($"Player {info.Sender.NickName} is instantiated");
         if(_view.IsMine) {
             nickName.gameObject.SetActive(false);

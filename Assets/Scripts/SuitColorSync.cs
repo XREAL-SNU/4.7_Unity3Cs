@@ -48,15 +48,9 @@ public class SuitColorSync : MonoBehaviourPunCallbacks
     }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps) {
-        Debug.Log("A");
-        Debug.Log(targetPlayer);
-        Debug.Log("B");
         GameObject playerChange = (GameObject)targetPlayer.TagObject;
-        Debug.Log(playerChange + "@");
-        Debug.Log("C");
-        GameObject suitG = playerChange.transform.Find("Space_Suit/Tpose_").gameObject;
-        Debug.Log(suitG + "#");
-        Debug.Log("D");
+        GameObject suitG = playerChange.transform.Find("Space_Suit/Tpose_/Man_Suit/Body").gameObject;
+        suit = suitG.GetComponent<Renderer>().material;
 
         suit.SetColor("_Color", TransformColor(changedProps["SuitColor"].ToString()));
     }
