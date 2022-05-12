@@ -44,6 +44,29 @@ public class ServerManager : MonoBehaviourPunCallbacks
         PhotonNetwork.ConnectUsingSettings();
     }
 
+    private bool inputQ;
+    private bool inputE;
+    private string changeRoom = "";
+
+    public void Update() {
+        if(PhotonNetwork.InRoom) {
+            if(PhotonNetwork.CurrentRoom.Name == "RoomQ") {
+                inputE = Input.GetKey(KeyCode.E);
+                if(inputE) {
+                    changeRoom = "E";
+                    PhotonNetwork.LeaveRoom();
+                }
+            }
+            if(PhotonNetwork.CurrentRoom.Name == "RoomE") {
+                inputQ = Input.GetKey(KeyCode.Q);
+                if(inputQ) {
+                    changeRoom = "Q";
+                    PhotonNetwork.LeaveRoom();
+                }
+            }
+        }
+    }
+
     public override void OnConnectedToMaster() {
         PhotonNetwork.JoinLobby();
         Debug.Log(PhotonNetwork.LocalPlayer.NickName);
@@ -51,16 +74,21 @@ public class ServerManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby() {
         Debug.Log("CurrentLobby: " + PhotonNetwork.CurrentLobby.Name);
-        bool joinedRoom = PhotonNetwork.JoinRandomRoom();
+        if(changeRoom != "") {
+            PhotonNetwork.JoinOrCreateRoom("Room" + changeRoom, new RoomOptions(), TypedLobby.Default);
+        } else {
+            PhotonNetwork.JoinOrCreateRoom("RoomQ", new RoomOptions(), TypedLobby.Default);
+        }
     }
 
     public override void OnJoinedRoom() {
+        changeRoom = "";
         Debug.Log("CurrentRoom: " + PhotonNetwork.CurrentRoom.Name);
         Debug.Log("CurrentPlayerNumber: " + PhotonNetwork.CurrentRoom.PlayerCount);
+        string SceneName = "Scene" + PhotonNetwork.CurrentRoom.Name.Substring(4, 1);
         if(PhotonNetwork.IsMasterClient) {
-            Debug.Log("LoadLevel");
-            PhotonNetwork.LoadLevel("SampleScene");
-            number ++;
+            Debug.Log("SceneLoaded: " + SceneName);
+            PhotonNetwork.LoadLevel(SceneName);
         }
     }
     private int number = 1;
@@ -90,6 +118,6 @@ public class ServerManager : MonoBehaviourPunCallbacks
     }
 
     private void InitPlayer() {
-        PhotonNetwork.Instantiate("Prefabs/Character", new Vector3(0, 3, newPlayerNumber/10), Quaternion.identity, 0);
+        PhotonNetwork.Instantiate("Prefabs/Character", new Vector3(0, 20, newPlayerNumber/100), Quaternion.identity, 0);
     }
 }
