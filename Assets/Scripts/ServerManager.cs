@@ -37,7 +37,7 @@ public class ServerManager : MonoBehaviourPunCallbacks
 
     public void Start() {
         PhotonNetwork.AutomaticallySyncScene = true;
-        newPlayerNumber = Random.Range(0, 10000);
+        newPlayerNumber = Random.Range(0, 1000);
         string nickName = "Player " + newPlayerNumber.ToString();
         PhotonNetwork.NickName = nickName;
         PhotonNetwork.GameVersion = gameVersion;
