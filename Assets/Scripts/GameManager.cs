@@ -29,12 +29,12 @@ public class GameManager : MonoBehaviour
 
     private Dictionary<string, Door> Doors = new Dictionary<string, Door>();
     private EmotionIconPanel selectedEmotion = null;
-    private AvatarFaceControl avatarFaceControl = null;
+    private FaceSync avatarFaceControl = null;
     public void AddDoor(string doorName, Door door)
     {
         Doors.Add(doorName, door);
     }
-    public void AddFace(AvatarFaceControl _avatarFaceControl)
+    public void AddFace(FaceSync _avatarFaceControl)
     {
         avatarFaceControl = _avatarFaceControl;
     }
@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
         }
         return doorOfName;
     }
-    public AvatarFaceControl getAvatarFaceControl()
+    public FaceSync getAvatarFaceControl()
     {
         return avatarFaceControl;
     }

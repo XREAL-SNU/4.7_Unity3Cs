@@ -223,7 +223,7 @@ public class CharacterControllerThirdPerson : MonoBehaviour
         {
             emotionName = EmotionManager.getEmotionManager().getEmotion(emotion);
         }
-        GameManager.Instance().getAvatarFaceControl().changeFace(emotionName);
+        GameManager.Instance().getAvatarFaceControl().changeFaceSync(emotionName);
     }
 
     public void OnTriggerEnter(Collider other)

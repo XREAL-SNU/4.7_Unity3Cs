@@ -13,6 +13,9 @@ public class SuitColorSync : MonoBehaviourPunCallbacks
     private bool inputG;
     private bool inputB;
 
+    private Material suit;
+
+
     public void Start() {
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable{ {"SuitColor", "White"}});
     }
@@ -31,8 +34,6 @@ public class SuitColorSync : MonoBehaviourPunCallbacks
             PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable{ {"SuitColor", "Blue"}});
         }
     }
-
-    private Material suit;
 
     private Color TransformColor(string colorText) {
         switch(colorText) {
