@@ -7,22 +7,27 @@ using UnityEngine.SceneManagement;
 
 public class NetworkController : MonoBehaviourPunCallbacks
 {
-    string nickName="Cherry";
+    string nickName;
     string gameVersion="0.0.1";
     void Init()
     {
+        nickName="Player"+ Random.Range(1,1000);
         PhotonNetwork.NickName=nickName;
         PhotonNetwork.GameVersion=gameVersion;
-        PhotonNetwork.ConnectUsingSettings();//Master Server Connect
     }
 
     private void Start() 
     {
-        Init();
+        if(!PhotonNetwork.IsConnected)
+            Init();
+        PhotonNetwork.ConnectUsingSettings();//Master Server Connect
+
     }
+    
     void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
+        Debug.Log("Awake");
     }
     //Master Server
     public override void OnConnectedToMaster()
@@ -39,10 +44,11 @@ public class NetworkController : MonoBehaviourPunCallbacks
         Debug.Log("CurrentLobby Name :" + PhotonNetwork.CurrentLobby.Name); // lobby 정보호출
         Debug.Log("In Lobby" + PhotonNetwork.InLobby);
 
-        //Room
-        string roomName= "RoomName";
-        RoomOptions roomOptions=new RoomOptions();
-        PhotonNetwork.JoinOrCreateRoom(roomName, roomOptions, TypedLobby.Default);//방에 들어가기 
+        if(SceneManager.GetActiveScene().name=="GameScene1")
+            JoinRoom("GameScene1");
+        else if(SceneManager.GetActiveScene().name=="GameScene2")
+            JoinRoom("GameScene2");
+        
     }
     public override void OnLeftLobby()
     {
@@ -59,17 +65,25 @@ public class NetworkController : MonoBehaviourPunCallbacks
     {
         base.OnJoinedRoom();
         Debug.Log("InRoom"+ PhotonNetwork.InRoom);
-        //OnSceneLoaded();
         SpawnPlayer();
-    }
 
+    }
     public override void OnLeftRoom()
 	{
-		Debug.Log("Left Room");
-		Debug.Log(PhotonNetwork.InRoom); // false
-		Debug.Log(PhotonNetwork.IsConnected); // true
-		PhotonNetwork.Disconnect(); // 연결 해제
+		Debug.Log("Left Room" +PhotonNetwork.InRoom);
+        
+        //PhotonNetwork.ConnectUsingSettings();//Master Server Connect
+		if(SceneManager.GetActiveScene().name=="GameScene1")
+        {
+            SceneManager.LoadScene("GameScene2");
+        }
+        else if(SceneManager.GetActiveScene().name=="GameScene2")
+        {
+            SceneManager.LoadScene("GameScene1");
+        }
+
 	}
+
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
@@ -100,10 +114,36 @@ public class NetworkController : MonoBehaviourPunCallbacks
     }
     */
 
-
+    public void JoinRoom(string roomName)
+    {
+        RoomOptions roomOptions=new RoomOptions();
+        PhotonNetwork.JoinOrCreateRoom(roomName, roomOptions, TypedLobby.Default);//방에 들어가기 
+    }
     public void SpawnPlayer()
     {
         PhotonNetwork.Instantiate("SeniorA/Common/Character", new Vector3(0,0.87f,-19f), Quaternion.identity, 0);
     }
 
+
+
+/*
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if(PhotonNetwork.OfflineMode || PhotonNetwork.InRoom)
+        {
+            SpawnPlayer();
+        }
+    }
+    public override void OnEnable()
+    {
+    	  // 씬 매니저의 sceneLoaded에 체인을 건다.
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    public override void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    */
 }

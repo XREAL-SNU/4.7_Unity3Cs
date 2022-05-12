@@ -26,41 +26,41 @@ public class ButtonController : MonoBehaviour, IPointerClickHandler
     {
         if (buttonType == _buttonType.ViewPort)
         {
-            UIManager.Instance().selectedBtn = this.gameObject;
+            ChangeFace.Instance().selectedBtn = this.gameObject;
         }
         else if (buttonType == _buttonType.QuickSlot)
         {
             Debug.Log(_isImaged);
-            if (UIManager.Instance().selectedBtn != null)
+            if (ChangeFace.Instance().selectedBtn != null)
             {
-                int existedNum=UIManager.Instance().CheckIsSameFace();
+                int existedNum=ChangeFace.Instance().CheckIsSameFace();
                 Debug.Log(existedNum);
                 if (existedNum<5)
                 {
                     
                     tempImage = buttonImage.sprite;
                     tempText = buttonText.text;
-                    buttonImage.sprite = UIManager.Instance().selectedBtn.transform.GetChild(0).gameObject.GetComponent<Image>().sprite;
-                    buttonText.text = UIManager.Instance().selectedBtn.transform.GetChild(1).gameObject.GetComponent<Text>().text;
+                    buttonImage.sprite = ChangeFace.Instance().selectedBtn.transform.GetChild(0).gameObject.GetComponent<Image>().sprite;
+                    buttonText.text = ChangeFace.Instance().selectedBtn.transform.GetChild(1).gameObject.GetComponent<Text>().text;
 
-                    UIManager.Instance().quickEmotions[existedNum].gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = tempImage;
-                    UIManager.Instance().quickEmotions[existedNum].gameObject.transform.GetChild(1).gameObject.GetComponent<Text>().text = tempText;
+                    ChangeFace.Instance().quickEmotions[existedNum].gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = tempImage;
+                    ChangeFace.Instance().quickEmotions[existedNum].gameObject.transform.GetChild(1).gameObject.GetComponent<Text>().text = tempText;
                     
                 }
                 else //quick slot에 이미지가 없다면
                 {
                     _isImaged = !_isImaged;
 
-                    buttonImage.sprite = UIManager.Instance().selectedBtn.transform.GetChild(0).gameObject.GetComponent<Image>().sprite;
-                    buttonText.text = UIManager.Instance().selectedBtn.transform.GetChild(1).gameObject.GetComponent<Text>().text;
+                    buttonImage.sprite = ChangeFace.Instance().selectedBtn.transform.GetChild(0).gameObject.GetComponent<Image>().sprite;
+                    buttonText.text = ChangeFace.Instance().selectedBtn.transform.GetChild(1).gameObject.GetComponent<Text>().text;
                 }
                 
-                UIManager.Instance().selectedBtn = null;
+                ChangeFace.Instance().selectedBtn = null;
             }
         }
         else
         {
-            UIManager.Instance().selectedBtn = null;
+            ChangeFace.Instance().selectedBtn = null;
         }
     }
 

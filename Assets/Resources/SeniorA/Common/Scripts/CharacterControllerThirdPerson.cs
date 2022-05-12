@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using Photon.Pun;
+using Photon.Realtime;
+using Hashtable=ExitGames.Client.Photon.Hashtable;
 
-public class CharacterControllerThirdPerson : MonoBehaviour, IPunInstantiateMagicCallback
+
+public class CharacterControllerThirdPerson :  MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 {
     public float MoveSpeed = 10.0f;
     public float RunSpeed = 20.0f;
@@ -33,7 +36,8 @@ public class CharacterControllerThirdPerson : MonoBehaviour, IPunInstantiateMagi
     //DoTween
     //private GameObject _characterMesh;
     private Transform pivot;
-
+    public enum ColorEnum{Red, Green, Blue, White};
+    private int suitColor;
     protected virtual void Start()
     {
         _controller = GetComponent<CharacterController>();
@@ -41,6 +45,8 @@ public class CharacterControllerThirdPerson : MonoBehaviour, IPunInstantiateMagi
         _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         //_characterMesh=this.gameObject.transform.GetChild(4).gameObject;//_SpaceSuit
         pivot=this.transform;
+        if(PhotonNetwork.LocalPlayer.CustomProperties[SUIT_COLOR_KEY] != null)
+            SetColorProperty((ColorEnum)PhotonNetwork.LocalPlayer.CustomProperties[SUIT_COLOR_KEY]);
     }
 
     protected virtual void Update()
@@ -57,6 +63,14 @@ public class CharacterControllerThirdPerson : MonoBehaviour, IPunInstantiateMagi
         GroundCheck();
         Move();
         Punch();
+
+        //SetSuitColor
+        if(Input.GetKeyDown(KeyCode.R))
+            SetColorProperty(ColorEnum.Red);
+        if(Input.GetKeyDown(KeyCode.G))
+            SetColorProperty(ColorEnum.Green);
+        if(Input.GetKeyDown(KeyCode.B))
+            SetColorProperty(ColorEnum.Blue);
     }
 
     private void Move()
@@ -203,4 +217,43 @@ public class CharacterControllerThirdPerson : MonoBehaviour, IPunInstantiateMagi
         info.Sender.TagObject=this.gameObject;
         Debug.Log($"Player {info.Sender.NickName}'s Avartar is Instantiated/t={info.SentServerTime}");
     }
+
+  
+    public void SetSuitColor(Player player, ColorEnum col) 
+    {
+        Debug.Log("SetSuitColor");
+        MaterialPropertyBlock block=new MaterialPropertyBlock();
+        block.SetColor("_Color", GetColor(col));
+
+        GameObject playerGo = (GameObject)player.TagObject;
+        Renderer suitRenderer = playerGo.transform.Find("Space_Suit/Tpose_/Man_Suit/Body").GetComponent<Renderer>();
+        Debug.Log(suitRenderer);
+        suitRenderer.SetPropertyBlock(block);
+        //GameManager.Instance().suitColor=(int)col;
+    }
+    private Color GetColor(ColorEnum col)
+    {
+        if(col == ColorEnum.Red)
+            return Color.red;
+        if(col == ColorEnum.Green)
+            return Color.green;
+        if(col == ColorEnum.Blue)
+            return Color.blue;
+        return Color.white;
+    }
+
+    protected const string SUIT_COLOR_KEY="SuitColor";
+    protected void SetColorProperty(ColorEnum col)
+    {
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable{{SUIT_COLOR_KEY, col}});
+    }   
+     
+    public override void  OnPlayerPropertiesUpdate(Player player, Hashtable updatedProps)
+    {
+        if(updatedProps.ContainsKey(SUIT_COLOR_KEY))
+        {
+            SetSuitColor(player, (ColorEnum)updatedProps[SUIT_COLOR_KEY]);
+        }
+    }
+
 }
