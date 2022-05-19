@@ -9,6 +9,7 @@ public class FaceSync : MonoBehaviourPunCallbacks
 {
     private Renderer faceRenderer;
     private PhotonView _view;
+    private string currentEmotion = "happy";
 
     private void Awake()
     {
@@ -18,16 +19,19 @@ public class FaceSync : MonoBehaviourPunCallbacks
     }
 
     public void changeFaceSync(string emotionName) {
-        _view.RPC("changeFace", RpcTarget.All, emotionName);
+        if(currentEmotion != emotionName) {
+            currentEmotion = emotionName;
+            _view.RPC("changeFace", RpcTarget.All, emotionName);
+        }
     }
-
+    
     [PunRPC]
     public void changeFace(string emotionName)
     {
         MaterialPropertyBlock block = new MaterialPropertyBlock();
 
         block.SetTexture("_MainTex", Resources.Load<Texture>("Expressions_Avatar/" + emotionName));
-
+        
         faceRenderer.SetPropertyBlock(block);
     }
 }
